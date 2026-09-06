@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= quiz.title %> - Exam Portal</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .exam-header {
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            margin-bottom: 20px;
+        }
+        .timer-container {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d9534f;
+            background: #fff0f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #f5c6cb;
+        }
+        .exam-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .question-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .options-list label {
+            display: block;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .options-list label:hover {
+            background-color: #f0f8ff;
+        }
+        .options-list input[type="radio"] {
+            margin-right: 10px;
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="exam-header">
+        <div>
+            <h2 style="margin: 0;"><%= quiz.title %></h2>
+            <small style="color: #666;">Candidate: <strong><%= studentName %></strong> | Subject: <%= quiz.subject %></small>
+        </div>
+        <div class="timer-container">
+            ⏱️ Time Left: <span id="timer-display">--:--</span>
+        </div>
+    </div>
+
+    <div class="exam-container">
+        <form id="quiz-form" action="/exam/<%= quiz._id %>/submit" method="POST">
+            <!-- Hidden metadata inputs -->
+            <input type="hidden" name="submissionReason" id="submissionReason" value="Normal Submission">
+            <input type="hidden" name="submittedAt" id="submittedAt" value="">
+
+            <% quiz.questions.forEach((q, index) => { %>
+                <div class="question-card">
+                    <div class="question-title">
+                        Q<%= index + 1 %>. <%= q.question %>
+                    </div>
+                    <div class="options-list">
+                        <% q.options.forEach((option, optIdx) => { %>
+                            <label>
+                                <input type="radio" name="question_<%= index %>" value="<%= optIdx %>">
+                                <%= option %>
+                            </label>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
+
+            <button type="submit" class="submit-btn" id="submit-btn">Submit Examination</button>
+        </form>
+    </div>
+
+    <script>
+        // Total duration passed from schema (minutes converted to seconds)
+        let timeLeft = Number("<%= quiz.duration %>") * 60;
+        const timerDisplay = document.getElementById('timer-display');
+        const form = document.getElementById('quiz-form');
+        let isSubmitted = false;
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownTimer);
+                document.getElementById('submissionReason').value = 'Time Expired';
+                triggerSubmission();
+            }
+            timeLeft--;
+        }
+
+        const countdownTimer = setInterval(updateTimer, 1000);
+        updateTimer();
+
+        function triggerSubmission() {
+            if (!isSubmitted) {
+                isSubmitted = true;
+                document.getElementById('submittedAt').value = new Date().toISOString();
+                form.submit();
+            }
+        }
+
+        // Normal form submission
+        form.addEventListener('submit', function (e) {
+            if (!isSubmitted) {
+                isSubmitted = true;
+                document.getElementById('submittedAt').value = new Date().toISOString();
+            }
+        });
+
+        // Anti-cheat tab switch detector
+        let tabSwitches = 0;
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden && !isSubmitted) {
+                tabSwitches++;
+                if (tabSwitches >= 3) {
+                    alert('Exam ended automatically due to multiple tab switching violations.');
+                    document.getElementById('submissionReason').value = 'Terminated: Excessive Tab Switching';
+                    triggerSubmission();
+                } else {
+                    alert(`Warning ${tabSwitches}/3: Leaving the assessment tab is strictly prohibited.`);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

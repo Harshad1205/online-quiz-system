@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Registration</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 40px 20px; }
+        .register-container { max-width: 480px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; color: #333; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        .btn-submit { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #1d4ed8; }
+        .alert-error { background: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 5px; margin-bottom: 16px; border: 1px solid #f87171; }
+        .alert-info { background: #e0f2fe; color: #0369a1; padding: 12px; border-radius: 5px; margin-bottom: 16px; border: 1px solid #7dd3fc; font-size: 13px; }
+        .links { text-align: center; margin-top: 16px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>🎓 Faculty Portal Registration</h2>
+    
+    <div class="alert-info">
+        🔒 <strong>Institutional Security:</strong> Registration requires the Faculty Secret Key. Accounts are activated following Admin/HOD verification.
+    </div>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/faculty/register" method="POST">
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Prof. Jane Doe" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Institutional Email</label>
+            <input type="email" id="email" name="email" placeholder="faculty@college.edu" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="secretKey">Faculty Security Passcode</label>
+            <input type="password" id="secretKey" name="secretKey" placeholder="Enter department secret key" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Registration</button>
+    </form>
+
+    <div class="links">
+        Already registered? <a href="/faculty/login">Login here</a> | <a href="/">Home</a>
+    </div>
+</div>
+
+</body>
+</html>

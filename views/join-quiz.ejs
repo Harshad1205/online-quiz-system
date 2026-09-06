@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Examination Entry Room</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; margin: 0; padding: 40px 20px; }
+        .entry-box { max-width: 480px; margin: auto; background: #fff; padding: 34px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .brand { text-align: center; margin-bottom: 24px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14px; color: #334155; }
+        input { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .btn-join { width: 100%; background: #10b981; color: white; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; }
+        .btn-join:hover { background: #059669; }
+        .alert-error { background: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; border: 1px solid #f87171; }
+    </style>
+</head>
+<body>
+
+<div class="entry-box">
+    <div class="brand">
+        <h2 style="margin: 0 0 6px 0;">✍️ Student Exam Access</h2>
+        <p style="color: #64748b; font-size: 14px; margin: 0;">Enter your official registration details and scheduled quiz code.</p>
+    </div>
+
+    <% if (error) { %>
+        <div class="alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/join" method="POST">
+        <div class="form-group">
+            <label>Full Student Name</label>
+            <input type="text" name="studentName" placeholder="e.g. John Doe" required>
+        </div>
+
+        <div class="form-group">
+            <label>Official Student Email</label>
+            <input type="email" name="studentEmail" placeholder="student@college.edu.in" required>
+        </div>
+
+        <div class="form-group">
+            <label>6-Character Quiz Code (PIN)</label>
+            <input type="text" name="quizCode" placeholder="e.g. A9B2X1" style="text-transform: uppercase; font-weight: bold; letter-spacing: 2px;" maxlength="6" required>
+        </div>
+
+        <button type="submit" class="btn-join">Authenticate & Enter Exam Room →</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px; font-size: 13px;">
+        <a href="/" style="color: #64748b; text-decoration: none;">← Return to Main Portal</a>
+    </div>
+</div>
+
+</body>
+</html>

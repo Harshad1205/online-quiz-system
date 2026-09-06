@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Studio — Create Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --surface: #ffffff;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+            --border-focus: #3b82f6;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --success-border: #86efac;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --radius-card: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 80px;
+        }
+
+        /* Top Bar */
+        .studio-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .studio-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .tag-draft {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .btn-ghost {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+        .btn-ghost:hover { background: #f1f5f9; color: var(--text-main); }
+
+        /* Centered Flow Layout */
+        .workspace {
+            max-width: 860px;
+            margin: 36px auto 0;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .card-header-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header-compact h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Inputs */
+        .field { margin-bottom: 18px; }
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+        .field-input, .field-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #fff;
+            transition: all 0.15s ease-in-out;
+        }
+        .field-input:focus, .field-textarea:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .two-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        @media (max-width: 640px) {
+            .two-cols { grid-template-columns: 1fr; }
+        }
+
+        /* Question Box */
+        .question-panel {
+            position: relative;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            background: #ffffff;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: border-color 0.2s;
+        }
+
+        .question-panel:focus-within {
+            border-color: var(--border-focus);
+        }
+
+        .q-header-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .q-pill {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+
+        .btn-trash {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        .btn-trash:hover {
+            color: var(--danger);
+            background: var(--danger-light);
+        }
+
+        /* Option Grid */
+        .option-choice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .option-choice-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 14px;
+            background: #fff;
+            transition: all 0.15s ease;
+        }
+
+        .option-row.is-correct {
+            border-color: var(--success-border);
+            background-color: var(--success-light);
+        }
+
+        .radio-correct {
+            accent-color: var(--success);
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+        }
+
+        .option-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .btn-outline-add {
+            width: 100%;
+            padding: 14px;
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            margin-bottom: 32px;
+            transition: all 0.15s;
+        }
+
+        .btn-outline-add:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .deadline-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Overview Card */
+        .bottom-overview-card {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px;
+            box-shadow: 0 4px 12px -2px rgba(0,0,0,0.05);
+        }
+
+        .overview-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 18px 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .overview-metrics-grid { grid-template-columns: 1fr; }
+        }
+
+        .metric-title { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 4px; }
+        .metric-val { font-size: 20px; font-weight: 800; color: var(--text-main); }
+
+        .btn-publish-main {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-publish-main:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+
+<form id="quizForm" action="/faculty/create-quiz" method="POST">
+
+    <!-- Top Navigation -->
+    <header class="studio-nav">
+        <div class="studio-title">
+            <span>📝 Quiz Authoring Studio</span>
+            <span class="tag-draft">Draft</span>
+        </div>
+        <div>
+            <a href="/faculty/dashboard" class="btn-ghost">Discard & Exit</a>
+        </div>
+    </header>
+
+    <div class="workspace">
+
+        <!-- 1. Metadata Section (Top) -->
+        <section class="card">
+            <div class="card-header-compact">
+                <h2>Assessment Metadata</h2>
+            </div>
+
+            <div class="two-cols">
+                <div class="field">
+                    <label class="field-label">Title</label>
+                    <input type="text" name="title" class="field-input" placeholder="e.g., Computer Networks Midterm" required>
+                </div>
+                <div class="field">
+                    <label class="field-label">Subject / Code</label>
+                    <input type="text" name="subject" class="field-input" placeholder="e.g., CS-402 Distributed Systems" required>
+                </div>
+            </div>
+
+            <div class="two-cols">
+                <div class="field">
+                    <label class="field-label">Duration (Minutes)</label>
+                    <input type="number" id="durationInput" name="duration" class="field-input" value="15" min="1" max="300" required>
+                </div>
+                <div class="field">
+                    <label class="field-label">Submission Deadline</label>
+                    <input type="datetime-local" id="deadlineInput" name="deadline" class="field-input">
+                    <label class="deadline-toggle-wrap">
+                        <input type="checkbox" id="noDeadlineToggle">
+                        <span>No Limit (Leave test open indefinitely)</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Questions Container (Middle) -->
+        <div id="questionsContainer">
+            <div class="question-panel" id="qBlock_1">
+                <div class="q-header-strip">
+                    <span class="q-pill">Question 1</span>
+                    <button type="button" class="btn-trash" onclick="removeQuestion(1)" style="display:none;">✕ Delete</button>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Question Text</label>
+                    <textarea name="question" class="field-textarea" rows="2" placeholder="Formulate the prompt or question clearly..." required></textarea>
+                </div>
+
+                <label class="field-label" style="margin-top: 14px;">Answer Options (Select the green circle for the correct choice):</label>
+                <div class="option-choice-grid">
+                    <div class="option-row is-correct">
+                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="0" checked onchange="updateCorrectStyle(this)">
+                        <input type="text" name="option1" class="option-input" placeholder="Option A" required>
+                    </div>
+                    <div class="option-row">
+                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="1" onchange="updateCorrectStyle(this)">
+                        <input type="text" name="option2" class="option-input" placeholder="Option B" required>
+                    </div>
+                    <div class="option-row">
+                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="2" onchange="updateCorrectStyle(this)">
+                        <input type="text" name="option3" class="option-input" placeholder="Option C" required>
+                    </div>
+                    <div class="option-row">
+                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="3" onchange="updateCorrectStyle(this)">
+                        <input type="text" name="option4" class="option-input" placeholder="Option D" required>
+                    </div>
+                </div>
+                <input type="hidden" name="correctAnswer" value="0" class="actual-correct-val">
+            </div>
+        </div>
+
+        <!-- Add Question Button -->
+        <button type="button" class="btn-outline-add" onclick="addQuestion()">
+            + Append Another Question
+        </button>
+
+        <!-- 3. Overview & Launch Section (Bottom) -->
+        <section class="bottom-overview-card">
+            <div class="card-header-compact">
+                <h2>Assessment Overview & Launch</h2>
+            </div>
+
+            <div class="overview-metrics-grid">
+                <div>
+                    <span class="metric-title">Questions Created</span>
+                    <span class="metric-val" id="totalQuestionsCount">1</span>
+                </div>
+                <div>
+                    <span class="metric-title">Allocated Time</span>
+                    <span class="metric-val" id="timeSummary">15 Mins</span>
+                </div>
+                <div>
+                    <span class="metric-title">Expiry Schedule</span>
+                    <span class="metric-val" id="expirySummary">Specific Date</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-publish-main">
+                Save & Launch Assessment →
+            </button>
+        </section>
+
+    </div>
+</form>
+
+<script>
+// Deadline Logic
+const noDeadlineToggle = document.getElementById('noDeadlineToggle');
+const deadlineInput = document.getElementById('deadlineInput');
+const expirySummary = document.getElementById('expirySummary');
+
+const now = new Date();
+now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+deadlineInput.min = now.toISOString().slice(0, 16);
+
+noDeadlineToggle.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        deadlineInput.value = '';
+        deadlineInput.disabled = true;
+        expirySummary.innerText = 'No Limit (Open)';
+    } else {
+        deadlineInput.disabled = false;
+        expirySummary.innerText = 'Specific Date';
+    }
+});
+
+deadlineInput.addEventListener('change', () => {
+    if (deadlineInput.value) {
+        noDeadlineToggle.checked = false;
+        expirySummary.innerText = 'Timed Expiry';
+    }
+});
+
+// Live Duration Sync
+const durationInput = document.getElementById('durationInput');
+const timeSummary = document.getElementById('timeSummary');
+durationInput.addEventListener('input', () => {
+    timeSummary.innerText = `${durationInput.value || 0} Mins`;
+});
+
+// Correct Answer Highlighting
+function updateCorrectStyle(radio) {
+    const parentGrid = radio.closest('.option-choice-grid');
+    parentGrid.querySelectorAll('.option-row').forEach(row => row.classList.remove('is-correct'));
+    radio.closest('.option-row').classList.add('is-correct');
+    
+    const panel = radio.closest('.question-panel');
+    panel.querySelector('.actual-correct-val').value = radio.value;
+}
+
+// Dynamic Question Management
+function reindex() {
+    const panels = document.querySelectorAll('.question-panel');
+    const count = panels.length;
+    document.getElementById('totalQuestionsCount').innerText = count;
+
+    panels.forEach((p, idx) => {
+        const num = idx + 1;
+        p.id = `qBlock_${num}`;
+        p.querySelector('.q-pill').innerText = `Question ${num}`;
+        
+        p.querySelectorAll('.radio-correct').forEach(r => {
+            r.name = `correctAnswer_${idx}`;
+        });
+
+        const delBtn = p.querySelector('.btn-trash');
+        delBtn.style.display = count > 1 ? 'inline-block' : 'none';
+        delBtn.setAttribute('onclick', `removeQuestion(${num})`);
+    });
+}
+
+function addQuestion() {
+    const panels = document.querySelectorAll('.question-panel');
+    const nextIdx = panels.length;
+    const nextNum = nextIdx + 1;
+
+    const html = `
+        <div class="question-panel" id="qBlock_${nextNum}">
+            <div class="q-header-strip">
+                <span class="q-pill">Question ${nextNum}</span>
+                <button type="button" class="btn-trash" onclick="removeQuestion(${nextNum})">✕ Delete</button>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Question Text</label>
+                <textarea name="question" class="field-textarea" rows="2" placeholder="Formulate the prompt or question clearly..." required></textarea>
+            </div>
+
+            <label class="field-label" style="margin-top: 14px;">Answer Options (Select the green circle for the correct choice):</label>
+            <div class="option-choice-grid">
+                <div class="option-row is-correct">
+                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="0" checked onchange="updateCorrectStyle(this)">
+                    <input type="text" name="option1" class="option-input" placeholder="Option A" required>
+                </div>
+                <div class="option-row">
+                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="1" onchange="updateCorrectStyle(this)">
+                    <input type="text" name="option2" class="option-input" placeholder="Option B" required>
+                </div>
+                <div class="option-row">
+                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="2" onchange="updateCorrectStyle(this)">
+                    <input type="text" name="option3" class="option-input" placeholder="Option C" required>
+                </div>
+                <div class="option-row">
+                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="3" onchange="updateCorrectStyle(this)">
+                    <input type="text" name="option4" class="option-input" placeholder="Option D" required>
+                </div>
+            </div>
+            <input type="hidden" name="correctAnswer" value="0" class="actual-correct-val">
+        </div>
+    `;
+
+    document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
+    reindex();
+
+    const newlyAdded = document.getElementById(`qBlock_${nextNum}`);
+    newlyAdded.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function removeQuestion(index) {
+    const el = document.getElementById(`qBlock_${index}`);
+    if (el) {
+        el.remove();
+        reindex();
+    }
+}
+</script>
+
+</body>
+</html>

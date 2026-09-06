@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quiz - <%= quiz.title %></title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #444;
+        }
+        input[type="text"], input[type="number"], input[type="datetime-local"], select {
+            width: 100%;
+            padding: 9px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .question-card {
+            border: 1px solid #e0e0e0;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .options-group {
+            margin-left: 10px;
+        }
+        .option-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .option-label {
+            width: 80px;
+            font-size: 14px;
+            color: #666;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-save {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #0056b3;
+        }
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #565e64;
+        }
+        /* Custom date picker action buttons */
+        .preset-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .preset-btn:hover {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Quiz</h2>
+        <form action="/faculty/edit-quiz/<%= quiz._id %>" method="POST">
+            <div class="form-group">
+                <label for="title">Quiz Title</label>
+                <input type="text" id="title" name="title" value="<%= quiz.title %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" value="<%= quiz.subject %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration (Minutes)</label>
+                <input type="number" id="duration" name="duration" value="<%= quiz.duration || 10 %>" min="1" required>
+            </div>
+
+            <!-- SUBMISSION DEADLINE / EXPIRY DATE PICKER WITH CONFIRM BUTTON -->
+            <div class="form-group" style="background: #fdfdfd; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px;">
+                <label for="deadline">📅 Submission Deadline / Expiry Date</label>
+                
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
+                    <input 
+                        type="datetime-local" 
+                        id="deadline" 
+                        name="deadline" 
+                        value="<%= quiz.deadline ? new Date(quiz.deadline.getTime() - (quiz.deadline.getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" 
+                        required
+                    >
+                    <button 
+                        type="button" 
+                        id="confirmDateBtn"
+                        onclick="confirmSelectedDate()" 
+                        style="background: #2563eb; color: #ffffff; border: none; padding: 10px 18px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                        ✓ Confirm Date
+                    </button>
+                </div>
+
+                <!-- Quick Presets -->
+                <div style="display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: #64748b; font-weight: bold;">Quick Select:</span>
+                    <button type="button" class="preset-btn" onclick="setPresetHours(6)">+6 Hours</button>
+                    <button type="button" class="preset-btn" onclick="setPresetDays(1)">Tomorrow</button>
+                    <button type="button" class="preset-btn" onclick="setPresetDays(2)">In 2 Days</button>
+                    <button type="button" class="preset-btn" onclick="setPresetDays(7)">In 1 Week</button>
+                </div>
+
+                <!-- Confirmation Status Feedback -->
+                <div id="dateStatus" style="margin-top: 10px; font-size: 13px; color: #16a34a; font-weight: bold; display: none;"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Quiz Code (Read Only)</label>
+                <input type="text" value="<%= quiz.quizCode %>" disabled style="background-color: #e9ecef;">
+            </div>
+
+            <hr style="margin: 25px 0; border: 0; border-top: 1px solid #ddd;">
+            <h3>Questions</h3>
+
+            <div id="questions-container">
+                <% quiz.questions.forEach((question, qIndex) => { %>
+                    <div class="question-card">
+                        <div class="form-group">
+                            <label>Question <%= qIndex + 1 %></label>
+                            <input type="text" name="question" value="<%= question.question %>" required>
+                        </div>
+
+                        <label>Options:</label>
+                        <div class="options-group">
+                            <div class="option-row">
+                                <span class="option-label">Option 1:</span>
+                                <input type="text" name="option1" value="<%= question.options[0] %>" required>
+                            </div>
+                            <div class="option-row">
+                                <span class="option-label">Option 2:</span>
+                                <input type="text" name="option2" value="<%= question.options[1] %>" required>
+                            </div>
+                            <div class="option-row">
+                                <span class="option-label">Option 3:</span>
+                                <input type="text" name="option3" value="<%= question.options[2] %>" required>
+                            </div>
+                            <div class="option-row">
+                                <span class="option-label">Option 4:</span>
+                                <input type="text" name="option4" value="<%= question.options[3] %>" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label>Correct Answer</label>
+                            <select name="correctAnswer" required>
+                                <option value="0" <%= question.correctAnswer === 0 ? 'selected' : '' %>>Option 1</option>
+                                <option value="1" <%= question.correctAnswer === 1 ? 'selected' : '' %>>Option 2</option>
+                                <option value="2" <%= question.correctAnswer === 2 ? 'selected' : '' %>>Option 3</option>
+                                <option value="3" <%= question.correctAnswer === 3 ? 'selected' : '' %>>Option 4</option>
+                            </select>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn btn-save">Save Changes</button>
+                <a href="/faculty/dashboard" class="btn btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function formatDateForInput(date) {
+            const offset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+        }
+
+        function setPresetHours(hours) {
+            const d = new Date();
+            d.setHours(d.getHours() + hours);
+            document.getElementById('deadline').value = formatDateForInput(d);
+            confirmSelectedDate();
+        }
+
+        function setPresetDays(days) {
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            document.getElementById('deadline').value = formatDateForInput(d);
+            confirmSelectedDate();
+        }
+
+        function confirmSelectedDate() {
+            const input = document.getElementById('deadline');
+            const status = document.getElementById('dateStatus');
+            const btn = document.getElementById('confirmDateBtn');
+            
+            if (input.value) {
+                const selected = new Date(input.value);
+                status.textContent = `✓ Deadline set to: ${selected.toLocaleString()}`;
+                status.style.display = 'block';
+                btn.textContent = '✓ Confirmed';
+                btn.style.background = '#16a34a';
+
+                setTimeout(() => {
+                    btn.textContent = '✓ Confirm Date';
+                    btn.style.background = '#2563eb';
+                }, 2000);
+            } else {
+                alert('Please pick a date & time from the calendar first.');
+            }
+        }
+    </script>
+</body>
+</html>

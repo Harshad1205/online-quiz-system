@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Examination & Assessment Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --surface: #ffffff;
+            --bg-canvas: #f8fafc;
+            --border-ui: #e2e8f0;
+            --text-heading: #0f172a;
+            --text-body: #475569;
+            --text-subtle: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--text-body);
+            line-height: 1.6;
+        }
+
+        /* Top Institutional Nav Bar */
+        .site-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-ui);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-heading);
+            font-weight: 800;
+            font-size: 19px;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-body);
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.15s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .btn-nav-action {
+            background: var(--primary);
+            color: #fff !important;
+            padding: 8px 18px;
+            border-radius: 8px;
+            transition: background-color 0.15s;
+        }
+
+        .btn-nav-action:hover { background: var(--primary-dark); }
+
+        /* Hero Section */
+        .hero {
+            padding: 70px 24px 50px;
+            text-align: center;
+            background: linear-gradient(180deg, #ffffff 0%, var(--bg-canvas) 100%);
+            border-bottom: 1px solid var(--border-ui);
+        }
+
+        .hero-inner { max-width: 860px; margin: auto; }
+
+        .system-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            border: 1px solid var(--border-ui);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 24px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #16a34a;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+        }
+
+        .hero-title {
+            font-size: clamp(32px, 4.5vw, 50px);
+            font-weight: 800;
+            color: var(--text-heading);
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-body);
+            max-width: 680px;
+            margin: auto;
+        }
+
+        /* Main Gateway Cards */
+        .portal-grid {
+            max-width: 1200px;
+            margin: -40px auto 60px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+
+        @media (max-width: 960px) {
+            .portal-grid {
+                grid-template-columns: 1fr;
+                margin-top: 30px;
+            }
+        }
+
+        .portal-card {
+            background: var(--surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 16px;
+            padding: 34px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .portal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 24px -6px rgba(0,0,0,0.08);
+        }
+
+        .card-student:hover { border-color: #10b981; }
+        .card-faculty:hover { border-color: #2563eb; }
+        .card-admin:hover { border-color: #7c3aed; }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 22px;
+        }
+
+        .icon-student { background: rgba(16, 185, 129, 0.12); }
+        .icon-faculty { background: rgba(37, 99, 235, 0.12); }
+        .icon-admin { background: rgba(124, 58, 237, 0.12); }
+
+        .card-title {
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-body);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .card-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .check-icon {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .btn-portal {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 13px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .btn-green { background: #10b981; color: #fff; }
+        .btn-green:hover { background: #059669; }
+
+        .btn-blue { background: #2563eb; color: #fff; }
+        .btn-blue:hover { background: #1d4ed8; }
+
+        .btn-purple { background: #7c3aed; color: #fff; }
+        .btn-purple:hover { background: #6d28d9; }
+
+        .btn-outline {
+            background: #f8fafc;
+            color: #334155;
+            border-color: var(--border-ui);
+            margin-top: 10px;
+        }
+        .btn-outline:hover { background: #f1f5f9; }
+
+        /* Institutional Highlights Banner */
+        .metrics-banner {
+            max-width: 1200px;
+            margin: 0 auto 70px;
+            padding: 0 24px;
+        }
+
+        .metrics-inner {
+            background: #ffffff;
+            border: 1px solid var(--border-ui);
+            border-radius: 16px;
+            padding: 36px 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .metrics-inner { grid-template-columns: 1fr 1fr; }
+        }
+
+        .metric-item h4 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-bottom: 4px;
+        }
+
+        .metric-item p {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contact & Information Section */
+        .info-section {
+            background: #ffffff;
+            border-top: 1px solid var(--border-ui);
+            border-bottom: 1px solid var(--border-ui);
+            padding: 60px 24px;
+        }
+
+        .info-container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 860px) {
+            .info-container { grid-template-columns: 1fr; }
+        }
+
+        .info-col h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 16px;
+        }
+
+        .info-col p {
+            font-size: 14px;
+            color: var(--text-body);
+            line-height: 1.7;
+        }
+
+        .contact-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .contact-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-body);
+        }
+
+        .contact-list a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .site-footer {
+            background: var(--bg-canvas);
+            padding: 30px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-subtle);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation Bar -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="/" class="brand-logo">
+                <span>🏛️</span>
+                <span>EduAssessment Portal</span>
+                <span class="brand-badge">Academic v2.6</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#portals">Access Portals</a></li>
+                <li><a href="#highlights">Features</a></li>
+                <li><a href="#contact">Contact Support</a></li>
+                <li><a href="/join" class="btn-nav-action">Join Live Test</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Hero -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="system-status">
+                <span class="pulse-dot"></span>
+                Examination Engine Online & Real-time Verified
+            </div>
+            <h1 class="hero-title">Automated Examination & Assessment Portal</h1>
+            <p class="hero-subtitle">
+                Institutional testing software providing real-time question deployment, compliance monitoring, and instant Excel grade-sheet export.
+            </p>
+        </div>
+    </section>
+
+    <!-- Operational Gateways -->
+    <section class="portal-grid" id="portals">
+
+        <!-- 1. Student Portal -->
+        <div class="portal-card card-student">
+            <div>
+                <div class="card-icon icon-student">✍️</div>
+                <h3 class="card-title">Student Room</h3>
+                <p class="card-desc">Enter scheduled examinations using an institutional test code. Real-time timer and secure submission tracking active.</p>
+                <ul class="card-features">
+                    <li><span class="check-icon">✓</span> Rapid session enrollment via Quiz PIN</li>
+                    <li><span class="check-icon">✓</span> Automated timer expiry enforcement</li>
+                    <li><span class="check-icon">✓</span> Instant provisional score verification</li>
+                </ul>
+            </div>
+            <div>
+                <a href="/join" class="btn-portal btn-green">Enter Test Room →</a>
+            </div>
+        </div>
+
+        <!-- 2. Faculty Dashboard -->
+        <div class="portal-card card-faculty">
+            <div>
+                <div class="card-icon icon-faculty">🎓</div>
+                <h3 class="card-title">Faculty Portal</h3>
+                <p class="card-desc">Design MCQ assessments, configure strict deadlines, view live analytics, and export student records to Excel.</p>
+                <ul class="card-features">
+                    <li><span class="check-icon">✓</span> Dynamic multi-question creator</li>
+                    <li><span class="check-icon">✓</span> Exportable student Excel grade database</li>
+                    <li><span class="check-icon">✓</span> Gated institutional passcode protection</li>
+                </ul>
+            </div>
+            <div>
+                <a href="/faculty/login" class="btn-portal btn-blue">Instructor Login</a>
+                <a href="/faculty/register" class="btn-portal btn-outline">Register with Department Key</a>
+            </div>
+        </div>
+
+        <!-- 3. Admin / HOD Control -->
+        <div class="portal-card card-admin">
+            <div>
+                <div class="card-icon icon-admin">🛡️</div>
+                <h3 class="card-title">Admin & HOD Gate</h3>
+                <p class="card-desc">Supervisory approval dashboard for department chairs and college administrators to verify and authorize instructors.</p>
+                <ul class="card-features">
+                    <li><span class="check-icon">✓</span> Faculty identity verification queue</li>
+                    <li><span class="check-icon">✓</span> One-click approval / revocation controls</li>
+                    <li><span class="check-icon">✓</span> Institutional system security oversight</li>
+                </ul>
+            </div>
+            <div>
+                <a href="/admin/login" class="btn-portal btn-purple">Administrator Portal →</a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Platform Highlights -->
+    <section class="metrics-banner" id="highlights">
+        <div class="metrics-inner">
+            <div class="metric-item">
+                <h4>99.9%</h4>
+                <p>System Availability</p>
+            </div>
+            <div class="metric-item">
+                <h4>256-Bit</h4>
+                <p>Credential Encryption</p>
+            </div>
+            <div class="metric-item">
+                <h4>.XLSX</h4>
+                <p>Automated Database Export</p>
+            </div>
+            <div class="metric-item">
+                <h4>100%</h4>
+                <p>Verified Faculty Access</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Institutional Contact & Support -->
+    <section class="info-section" id="contact">
+        <div class="info-container">
+            <div class="info-col">
+                <h4>🏛️ Examination Regulatory Cell</h4>
+                <p>
+                    The official digital assessment infrastructure for academic testing, midterm evaluations, and departmental competitions. All accounts undergo supervisory HOD approval.
+                </p>
+            </div>
+            <div class="info-col">
+                <h4>📞 Contact & Helpline</h4>
+                <ul class="contact-list">
+                    <li>
+                        <span>📧 Email:</span>
+                        <a href="mailto:examination@college.edu.in">examination@college.edu.in</a>
+                    </li>
+                    <li>
+                        <span>📞 Phone:</span>
+                        <a href="tel:+912012345678">+91 (020) 2456-7890</a>
+                    </li>
+                    <li>
+                        <span>📱 Mobile:</span>
+                        <a href="tel:+919876543210">+91 98765 43210</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="info-col">
+                <h4>🏢 Department Office</h4>
+                <p>
+                    Computer Center & Examination Wing<br>
+                    Main Academic Block, Campus Level 2<br>
+                    Hours: Mon – Sat (09:00 AM – 05:00 PM)
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professional Footer -->
+    <footer class="site-footer">
+        <p>© 2026 Institutional Examination & Quiz Management System. All Rights Reserved.</p>
+        <p style="margin-top: 4px;">Designed for academic rigor, authenticated security, and automated evaluation metrics.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - Examination Management</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; margin: 0; padding: 0; color: #1e293b; }
+        nav { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 16px 36px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 18px; font-weight: 800; color: #0f172a; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-actions a { text-decoration: none; font-size: 14px; font-weight: 600; margin-left: 16px; }
+        .btn-create { background: #2563eb; color: #fff; padding: 8px 16px; border-radius: 8px; }
+        .btn-logout { color: #dc2626; }
+        .container { max-width: 1100px; margin: 35px auto; padding: 0 20px; }
+        .header-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .quiz-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card-active { border-left: 5px solid #16a34a; }
+        .card-expired { border-left: 5px solid #dc2626; }
+        .card-unset { border-left: 5px solid #94a3b8; }
+        .badge { padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 700; }
+        .badge-active { background: #dcfce7; color: #166534; }
+        .badge-expired { background: #fee2e2; color: #991b1b; }
+        .badge-unset { background: #f1f5f9; color: #475569; }
+        .quiz-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 18px 0; font-size: 14px; color: #475569; }
+        .quiz-code { font-family: monospace; font-size: 15px; font-weight: bold; background: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 4px; }
+        .quiz-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .btn-action { padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; }
+        .btn-results { background: #2563eb; color: white; }
+        .btn-edit { background: #f59e0b; color: white; }
+        .btn-delete { background: #ef4444; color: white; }
+        .btn-excel { background: #16a34a; color: white; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-brand">🏛️ EduAssessment Faculty Terminal</a>
+    <div class="nav-actions">
+        <a href="/faculty/create-quiz" class="btn-create">+ Create Assessment</a>
+        <a href="/faculty/logout" class="btn-logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="header-panel">
+        <div>
+            <h1 style="font-size: 26px; font-weight: 800; margin: 0;">Welcome, <%= facultyName %> 👋</h1>
+            <p style="color: #64748b; margin: 4px 0 0 0; font-size: 14px;">Authorized Academic Instructor | Examination Evaluation Control</p>
+        </div>
+    </div>
+
+    <h2 style="font-size: 18px; margin-bottom: 16px; color: #334155;">Your Active & Past Assessments</h2>
+
+    <% if (quizzes.length === 0) { %>
+        <div class="quiz-card card-unset" style="text-align: center; padding: 45px 20px;">
+            <p style="color: #64748b; margin-bottom: 16px;">You have not created any quizzes or examinations yet.</p>
+            <a href="/faculty/create-quiz" class="btn-action btn-results">+ Create Your First Quiz</a>
+        </div>
+    <% } %>
+
+    <% quizzes.forEach(quiz => { %>
+        <% 
+            const hasDeadline = Boolean(quiz.deadline);
+            const isExpired = hasDeadline && (new Date() > new Date(quiz.deadline));
+            const cardClass = !hasDeadline ? 'card-unset' : (isExpired ? 'card-expired' : 'card-active');
+        %>
+        <div class="quiz-card <%= cardClass %>">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 20px; font-weight: 700;">
+                    <%= quiz.title %>
+                    <% if (!hasDeadline) { %>
+                        <span class="badge badge-unset">⚪ Open (No Limit)</span>
+                    <% } else if (isExpired) { %>
+                        <span class="badge badge-expired">⚠️ Expired</span>
+                    <% } else { %>
+                        <span class="badge badge-active">🟢 Active</span>
+                    <% } %>
+                </h3>
+            </div>
+
+            <div class="quiz-meta">
+                <div>Subject: <strong><%= quiz.subject %></strong></div>
+                <div>Quiz PIN: <span class="quiz-code"><%= quiz.quizCode %></span></div>
+                <div>Duration: <strong><%= quiz.duration || 10 %> Minutes</strong></div>
+                <div>Total Questions: <strong><%= quiz.questions.length %></strong></div>
+                <div>
+                    Deadline: 
+                    <strong><%= hasDeadline ? new Date(quiz.deadline).toLocaleString() : 'Open Access' %></strong>
+                </div>
+            </div>
+
+            <div class="quiz-actions">
+                <a class="btn-action btn-results" href="/faculty/quiz-results/<%= quiz._id %>">📊 View Submissions</a>
+                <a class="btn-action btn-excel" href="/faculty/export-results/<%= quiz._id %>">📥 Download Excel (.xlsx)</a>
+                <a class="btn-action btn-edit" href="/faculty/edit-quiz/<%= quiz._id %>">✏️ Edit</a>
+                <form action="/faculty/delete-quiz/<%= quiz._id %>" method="POST" style="margin: 0; display: inline;">
+                    <button class="btn-action btn-delete" onclick="return confirm('Are you sure you want to delete this quiz and its submitted results database?')">🗑️ Delete</button>
+                </form>
+            </div>
+        </div>
+    <% }) %>
+</div>
+
+</body>
+</html>

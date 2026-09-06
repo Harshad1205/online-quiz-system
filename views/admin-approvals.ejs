@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Faculty Verification</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 25px;
+        }
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .btn-logout {
+            background-color: #ef4444;
+            color: white;
+            padding: 6px 14px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8fafc;
+            color: #334155;
+            font-size: 14px;
+        }
+        .btn-approve {
+            background-color: #16a34a;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-reject {
+            background-color: #dc2626;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="navbar">
+        <div>
+            <h2 style="margin: 0; color: #0f172a;">🛡️ Administrator Workspace</h2>
+            <small style="color: #64748b;">Logged in as: <strong><%= adminName %></strong></small>
+        </div>
+        <a href="/admin/logout" class="btn-logout">Logout</a>
+    </div>
+
+    <h3>Pending Faculty Registrations (<%= pendingFaculty.length %>)</h3>
+
+    <% if (pendingFaculty.length === 0) { %>
+        <p style="color: #64748b; font-style: italic;">All faculty accounts are currently verified and approved.</p>
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Teacher Name</th>
+                    <th>Email Address</th>
+                    <th>Registered On</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% pendingFaculty.forEach(faculty => { %>
+                    <tr>
+                        <td><strong><%= faculty.name %></strong></td>
+                        <td><%= faculty.email %></td>
+                        <td><%= new Date(faculty.createdAt).toLocaleString() %></td>
+                        <td><span class="badge-pending">Needs Approval</span></td>
+                        <td>
+                            <form action="/admin/approve-faculty/<%= faculty._id %>" method="POST" style="display: inline;">
+                                <button type="submit" class="btn-approve">Approve</button>
+                            </form>
+                            <form action="/admin/reject-faculty/<%= faculty._id %>" method="POST" style="display: inline;" onsubmit="return confirm('Reject and permanently remove this registration?');">
+                                <button type="submit" class="btn-reject">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</div>
+
+</body>
+</html>
