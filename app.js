@@ -264,24 +264,22 @@ app.get('/faculty/logout', (req, res) => {
 // ========================================
 // FACULTY DASHBOARD & QUIZ CRUD
 // ========================================
-app.get('/faculty/dashboard', isFacultyLoggedIn, async (req, res) => {
+app.get('/faculty/dashboard', async (req, res) => {
     try {
-        const quizzes = await Quiz.find({
-            faculty: req.session.facultyId
-        }).sort({ createdAt: -1 });
+        if (!req.session || !req.session.facultyId) {
+            return res.redirect('/faculty/login');
+        }
+
+        const quizzes = await Quiz.find({ faculty: req.session.facultyId }).sort({ createdAt: -1 });
 
         res.render('dashboard', {
-            quizzes,
-            facultyName: req.session.facultyName
+            facultyName: req.session.facultyName || 'Faculty Member',
+            quizzes: quizzes || []
         });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error loading dashboard.');
+    } catch (err) {
+        console.error('Dashboard Error:', err);
+        res.status(500).send('Internal Server Error: ' + err.message);
     }
-});
-
-app.get('/faculty/create-quiz', isFacultyLoggedIn, (req, res) => {
-    res.render('create-quiz', { error: null });
 });
 
 app.post('/faculty/create-quiz', isFacultyLoggedIn, async (req, res) => {
