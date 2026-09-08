@@ -3,52 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Login</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Faculty Portal Login — AcademiQuiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 40px 20px; }
-        .login-container { max-width: 440px; margin: auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-weight: bold; margin-bottom: 6px; color: #333; }
-        input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
-        .btn-submit { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-submit:hover { background: #1d4ed8; }
-        .alert-error { background: #fee2e2; color: #b91c1c; border: 1px solid #f87171; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
-        .alert-info { background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
-        .links { text-align: center; margin-top: 16px; font-size: 14px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white relative overflow-hidden">
 
-<div class="login-container">
-    <h2>🎓 Faculty Portal Login</h2>
+    <!-- Subtle Ambient Glow Background -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert-error"><%= error %></div>
-    <% } %>
-
-    <% if (typeof info !== 'undefined' && info) { %>
-        <div class="alert-info"><%= info %></div>
-    <% } %>
-
-    <form action="/faculty/login" method="POST">
-        <div class="form-group">
-            <label for="email">Institutional Email</label>
-            <input type="email" id="email" name="email" placeholder="faculty@college.edu" required>
+    <div class="max-w-md w-full relative z-10">
+        
+        <!-- Header Branding -->
+        <div class="text-center mb-8">
+            <a href="/" class="inline-block transition-transform hover:scale-105">
+                <div class="h-14 w-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white flex items-center justify-center font-extrabold text-2xl mx-auto shadow-xl shadow-emerald-500/20 ring-1 ring-white/20 mb-4">
+                    🎓
+                </div>
+            </a>
+            <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">Faculty Workspace</h1>
+            <p class="text-slate-400 text-xs md:text-sm mt-1.5 font-medium">Access your assessment authoring and grading console</p>
         </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <!-- Card Form Container -->
+        <div class="bg-slate-900/90 border border-slate-800/90 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl space-y-6">
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-center gap-2.5 animate-shake">
+                    <span class="text-base">⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <% if (typeof info !== 'undefined' && info) { %>
+                <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-2.5">
+                    <span class="text-base">ℹ️</span>
+                    <span><%= info %></span>
+                </div>
+            <% } %>
+
+            <form action="/faculty/login" method="POST" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Institutional Email</label>
+                    <div class="relative">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="faculty@college.edu.in" 
+                            required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition shadow-inner"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-400">Account Password</label>
+                    </div>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="••••••••" 
+                            required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition shadow-inner"
+                        >
+                    </div>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/25 transition-all duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                    Authenticate & Sign In →
+                </button>
+            </form>
+
+            <div class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <a href="/faculty/register" class="text-emerald-400 hover:text-emerald-300 font-semibold transition">
+                    New faculty? Register with Passcode
+                </a>
+                <a href="/" class="text-slate-500 hover:text-slate-300 font-medium transition">
+                    ← Portal Home
+                </a>
+            </div>
         </div>
 
-        <button type="submit" class="btn-submit">Login</button>
-    </form>
-
-    <div class="links">
-        New Faculty? <a href="/faculty/register">Register with Passcode</a> | <a href="/">Home</a>
+        <!-- Footer Caption -->
+        <p class="text-center text-[11px] text-slate-600 mt-6 font-medium">
+            Institutional Proctoring & Examination Engine • Protected by Department Gatekeeper
+        </p>
     </div>
-</div>
 
 </body>
 </html>

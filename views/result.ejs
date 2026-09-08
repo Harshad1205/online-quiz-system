@@ -3,169 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Result - <%= quiz.title %></title>
+    <title>Assessment Outcome — <%= quiz.title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            margin: 0;
-            padding: 30px 15px;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
-        .score-card {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-            margin-bottom: 25px;
-            border: 1px solid #334155;
-        }
-        .score-box {
-            font-size: 42px;
-            font-weight: bold;
-            color: #38bdf8;
-            margin: 15px 0;
-        }
-        .breakdown-card {
-            background: #1e293b;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-            border: 1px solid #334155;
-        }
-        .question-block {
-            border: 1px solid #334155;
-            background-color: #0f172a;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-        .question-block.correct {
-            border-left: 6px solid #22c55e;
-        }
-        .question-block.incorrect {
-            border-left: 6px solid #ef4444;
-        }
-        .option-item {
-            padding: 10px 14px;
-            margin: 6px 0;
-            border-radius: 6px;
-            font-size: 14px;
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            color: #cbd5e1;
-        }
-        .option-item.selected-correct {
-            background-color: rgba(34, 197, 94, 0.15);
-            border-color: #22c55e;
-            color: #4ade80;
-            font-weight: bold;
-        }
-        .option-item.selected-wrong {
-            background-color: rgba(239, 68, 68, 0.15);
-            border-color: #ef4444;
-            color: #f87171;
-            font-weight: bold;
-        }
-        .option-item.actual-correct {
-            background-color: rgba(56, 189, 248, 0.15);
-            border-color: #38bdf8;
-            color: #38bdf8;
-            font-weight: bold;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            float: right;
-        }
-        .badge.pass { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-        .badge.fail { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-        .btn-home {
-            display: inline-block;
-            margin-top: 15px;
-            background: #0284c7;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 10px 22px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-        .btn-home:hover { background: #0369a1; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8 selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
 
-<div class="container">
-    <div class="score-card">
-        <h2 style="margin-top: 0;">Exam Results</h2>
-        <p style="color: #94a3b8; margin: 0;">Student: <strong><%= studentName %></strong> (<%= studentEmail %>)</p>
-        <p style="color: #94a3b8; margin-top: 5px;">Quiz: <strong><%= quiz.title %></strong> | Subject: <%= quiz.subject %></p>
-        
-        <div class="score-box">
-            <%= result.score %> / <%= result.totalQuestions %>
-        </div>
-        <p style="font-size: 15px; color: #94a3b8; margin: 0;">
-            Score Percentage: <strong><%= Math.round((result.score / result.totalQuestions) * 100) %>%</strong>
-        </p>
+    <!-- Ambient Glow Effects -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/3 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <a href="/" class="btn-home">Return to Home</a>
-    </div>
+    <div class="max-w-4xl mx-auto space-y-8 relative z-10">
 
-    <div class="breakdown-card">
-        <h3 style="margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 12px;">
-            Detailed Question Breakdown
-        </h3>
+        <!-- Score & Status Header Card -->
+        <div class="bg-slate-900/90 border border-slate-800 backdrop-blur-2xl rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden text-center space-y-6">
+            
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+                <span><%= quiz.subject %></span>
+                <span class="text-slate-600">•</span>
+                <span><%= quiz.title %></span>
+            </div>
 
-        <% result.answers.forEach((ans, idx) => { %>
-            <div class="question-block <%= ans.isCorrect ? 'correct' : 'incorrect' %>">
-                <div>
-                    <span class="badge <%= ans.isCorrect ? 'pass' : 'fail' %>">
-                        <%= ans.isCorrect ? 'Correct (+1)' : 'Incorrect (0)' %>
+            <div>
+                <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">Exam Evaluation Report</h1>
+                <p class="text-slate-400 text-xs md:text-sm mt-1.5 font-medium">
+                    Verified submission recorded for <strong class="text-slate-200"><%= studentName %></strong> 
+                    <span class="text-slate-500 font-mono">(<%= studentEmail %>)</span>
+                </p>
+            </div>
+
+            <!-- Performance Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto pt-2">
+                <div class="bg-slate-950/70 border border-slate-800/90 rounded-2xl p-5 shadow-inner">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Score Obtained</span>
+                    <span class="text-3xl md:text-4xl font-black text-indigo-400 font-mono">
+                        <%= result.score %><span class="text-slate-600 text-2xl font-normal"> / <%= result.totalQuestions %></span>
                     </span>
-                    <strong>Q<%= idx + 1 %>: <%= ans.questionText %></strong>
                 </div>
 
-                <div style="margin-top: 12px;">
-                    <% ans.options.forEach((optText, optIdx) => { 
-                        let optionClass = 'option-item';
-                        let labelNote = '';
+                <% const percentage = Math.round((result.score / result.totalQuestions) * 100); %>
+                <div class="bg-slate-950/70 border border-slate-800/90 rounded-2xl p-5 shadow-inner">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Score Rate</span>
+                    <span class="text-3xl md:text-4xl font-black font-mono <%= percentage >= 50 ? 'text-emerald-400' : 'text-rose-400' %>">
+                        <%= percentage %>%
+                    </span>
+                </div>
 
-                        if (ans.selectedOption === optIdx) {
-                            if (ans.isCorrect) {
-                                optionClass += ' selected-correct';
-                                labelNote = ' — Your Selection (Correct)';
-                            } else {
-                                optionClass += ' selected-wrong';
-                                labelNote = ' — Your Selection (Wrong)';
-                            }
-                        } else if (optIdx === ans.correctOption && !ans.isCorrect) {
-                            optionClass += ' actual-correct';
-                            labelNote = ' — Correct Answer';
-                        }
-                    %>
-                        <div class="<%= optionClass %>">
-                            <%= String.fromCharCode(65 + optIdx) %>) <%= optText %> <%= labelNote %>
-                        </div>
-                    <% }) %>
-
-                    <% if (ans.selectedOption === null) { %>
-                        <p style="color: #f87171; font-size: 13px; font-weight: bold; margin-top: 10px; margin-bottom: 0;">
-                            ⚠️ Skipped. Correct answer was Option <%= String.fromCharCode(65 + ans.correctOption) %>.
-                        </p>
-                    <% } %>
+                <div class="bg-slate-950/70 border border-slate-800/90 rounded-2xl p-5 shadow-inner">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Session Protocol</span>
+                    <span class="text-xs font-bold text-slate-300 block mt-2">
+                        <%= result.submissionReason || 'Normal Attempt' %>
+                    </span>
                 </div>
             </div>
-        <% }) %>
+
+            <div class="pt-4">
+                <a href="/" 
+                   class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700/80 hover:border-slate-600 font-bold px-6 py-3 rounded-2xl text-xs transition shadow-sm active:scale-95">
+                    ← Return to Portal Homepage
+                </a>
+            </div>
+        </div>
+
+        <!-- Question Breakdown Section -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+            
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                    <h2 class="text-sm font-extrabold uppercase tracking-widest text-white">
+                        Question-by-Question Response Log
+                    </h2>
+                </div>
+                <span class="text-xs text-slate-500 font-medium">Answer Key Verification</span>
+            </div>
+
+            <div class="space-y-6">
+                <% result.answers.forEach((ans, idx) => { %>
+                    <div class="rounded-2xl border p-6 transition shadow-md <%= ans.isCorrect ? 'bg-emerald-950/10 border-emerald-500/30' : 'bg-rose-950/10 border-rose-500/30' %>">
+                        
+                        <!-- Question Header -->
+                        <div class="flex items-start justify-between gap-4 pb-3 border-b border-slate-800/70 mb-4">
+                            <span class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-indigo-400">
+                                Question <%= idx + 1 %>
+                            </span>
+                            <span class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider <%= ans.isCorrect ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30' %>">
+                                <%= ans.isCorrect ? '✔ Correct (+1)' : '✖ Incorrect (0)' %>
+                            </span>
+                        </div>
+
+                        <!-- Question Statement -->
+                        <p class="text-sm md:text-base font-bold text-slate-100 mb-5 leading-relaxed">
+                            <%= ans.questionText %>
+                        </p>
+
+                        <!-- Answer Options List -->
+                        <div class="space-y-2.5">
+                            <% ans.options.forEach((optText, optIdx) => { 
+                                let cardStyle = 'bg-slate-950/70 border-slate-800/80 text-slate-400';
+                                let badgeText = '';
+                                let badgeStyle = '';
+
+                                if (ans.selectedOption === optIdx) {
+                                    if (ans.isCorrect) {
+                                        cardStyle = 'bg-emerald-500/15 border-emerald-500/50 text-emerald-200 font-semibold shadow-inner';
+                                        badgeText = 'Your Answer (Correct)';
+                                        badgeStyle = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                                    } else {
+                                        cardStyle = 'bg-rose-500/15 border-rose-500/50 text-rose-200 font-semibold shadow-inner';
+                                        badgeText = 'Your Answer (Wrong)';
+                                        badgeStyle = 'bg-rose-500/20 text-rose-300 border border-rose-500/30';
+                                    }
+                                } else if (optIdx === ans.correctOption && !ans.isCorrect) {
+                                    cardStyle = 'bg-sky-500/10 border-sky-500/40 text-sky-200 font-medium';
+                                    badgeText = 'Correct Answer';
+                                    badgeStyle = 'bg-sky-500/20 text-sky-300 border border-sky-500/30';
+                                }
+                            %>
+                                <div class="flex items-center justify-between p-3.5 rounded-xl border text-xs md:text-sm transition <%= cardStyle %>">
+                                    <div class="flex items-center gap-3">
+                                        <span class="h-6 w-6 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 flex items-center justify-center font-mono font-bold text-xs shrink-0">
+                                            <%= String.fromCharCode(65 + optIdx) %>
+                                        </span>
+                                        <span><%= optText %></span>
+                                    </div>
+                                    <% if (badgeText) { %>
+                                        <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md ml-3 shrink-0 <%= badgeStyle %>">
+                                            <%= badgeText %>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            <% }) %>
+
+                            <% if (ans.selectedOption === null) { %>
+                                <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-2 mt-3">
+                                    <span>⚠️</span>
+                                    <span>Question skipped by student. Correct choice was Option <%= String.fromCharCode(65 + ans.correctOption) %>.</span>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <p class="text-center text-xs text-slate-600 font-medium pb-6">
+            Institutional Exam Engine • Results are permanently stored in the audit registry
+        </p>
+
     </div>
-</div>
 
 </body>
 </html>

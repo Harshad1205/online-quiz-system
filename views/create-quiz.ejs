@@ -3,548 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assessment Studio — Create Quiz</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Assessment Studio — Author Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-light: #eff6ff;
-            --surface: #ffffff;
-            --bg: #f8fafc;
-            --border: #e2e8f0;
-            --border-focus: #3b82f6;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --success: #16a34a;
-            --success-light: #f0fdf4;
-            --success-border: #86efac;
-            --danger: #ef4444;
-            --danger-light: #fef2f2;
-            --radius-card: 16px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            line-height: 1.5;
-            padding-bottom: 80px;
-        }
-
-        /* Top Bar */
-        .studio-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 36px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .studio-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .tag-draft {
-            background: #f1f5f9;
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 6px;
-        }
-
-        .btn-ghost {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: all 0.15s;
-        }
-        .btn-ghost:hover { background: #f1f5f9; color: var(--text-main); }
-
-        /* Centered Flow Layout */
-        .workspace {
-            max-width: 860px;
-            margin: 36px auto 0;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-card);
-            padding: 30px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .card-header-compact {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-header-compact h2 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        /* Inputs */
-        .field { margin-bottom: 18px; }
-        .field-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 6px;
-        }
-        .field-input, .field-textarea {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            color: var(--text-main);
-            background: #fff;
-            transition: all 0.15s ease-in-out;
-        }
-        .field-input:focus, .field-textarea:focus {
-            outline: none;
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-        }
-
-        .two-cols {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        @media (max-width: 640px) {
-            .two-cols { grid-template-columns: 1fr; }
-        }
-
-        /* Question Box */
-        .question-panel {
-            position: relative;
-            border: 1.5px solid var(--border);
-            border-radius: 14px;
-            background: #ffffff;
-            padding: 24px;
-            margin-bottom: 24px;
-            transition: border-color 0.2s;
-        }
-
-        .question-panel:focus-within {
-            border-color: var(--border-focus);
-        }
-
-        .q-header-strip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .q-pill {
-            background: var(--primary-light);
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 6px;
-        }
-
-        .btn-trash {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 13px;
-            font-weight: 600;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
             cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.15s;
         }
-        .btn-trash:hover {
-            color: var(--danger);
-            background: var(--danger-light);
-        }
-
-        /* Option Grid */
-        .option-choice-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 14px;
-        }
-
-        @media (max-width: 640px) {
-            .option-choice-grid { grid-template-columns: 1fr; }
-        }
-
-        .option-row {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 8px 14px;
-            background: #fff;
-            transition: all 0.15s ease;
-        }
-
-        .option-row.is-correct {
-            border-color: var(--success-border);
-            background-color: var(--success-light);
-        }
-
-        .radio-correct {
-            accent-color: var(--success);
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-            margin-right: 12px;
-        }
-
-        .option-input {
-            border: none;
-            background: transparent;
-            width: 100%;
-            font-size: 14px;
-            font-family: inherit;
-            color: var(--text-main);
-            outline: none;
-        }
-
-        .btn-outline-add {
-            width: 100%;
-            padding: 14px;
-            background: #ffffff;
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--primary);
-            cursor: pointer;
-            margin-bottom: 32px;
-            transition: all 0.15s;
-        }
-
-        .btn-outline-add:hover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-
-        .deadline-toggle-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Bottom Overview Card */
-        .bottom-overview-card {
-            background: #ffffff;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-card);
-            padding: 30px;
-            box-shadow: 0 4px 12px -2px rgba(0,0,0,0.05);
-        }
-
-        .overview-metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 18px 24px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        @media (max-width: 640px) {
-            .overview-metrics-grid { grid-template-columns: 1fr; }
-        }
-
-        .metric-title { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 4px; }
-        .metric-val { font-size: 20px; font-weight: 800; color: var(--text-main); }
-
-        .btn-publish-main {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .btn-publish-main:hover { background: #1d4ed8; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
 
-<form id="quizForm" action="/faculty/create-quiz" method="POST">
+    <!-- Ambient Glow Backdrops -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <!-- Top Navigation -->
-    <header class="studio-nav">
-        <div class="studio-title">
-            <span>📝 Quiz Authoring Studio</span>
-            <span class="tag-draft">Draft</span>
-        </div>
-        <div>
-            <a href="/faculty/dashboard" class="btn-ghost">Discard & Exit</a>
-        </div>
-    </header>
-
-    <div class="workspace">
-
-        <!-- 1. Metadata Section (Top) -->
-        <section class="card">
-            <div class="card-header-compact">
-                <h2>Assessment Metadata</h2>
-            </div>
-
-            <div class="two-cols">
-                <div class="field">
-                    <label class="field-label">Title</label>
-                    <input type="text" name="title" class="field-input" placeholder="e.g., Computer Networks Midterm" required>
-                </div>
-                <div class="field">
-                    <label class="field-label">Subject / Code</label>
-                    <input type="text" name="subject" class="field-input" placeholder="e.g., CS-402 Distributed Systems" required>
-                </div>
-            </div>
-
-            <div class="two-cols">
-                <div class="field">
-                    <label class="field-label">Duration (Minutes)</label>
-                    <input type="number" id="durationInput" name="duration" class="field-input" value="15" min="1" max="300" required>
-                </div>
-                <div class="field">
-                    <label class="field-label">Submission Deadline</label>
-                    <input type="datetime-local" id="deadlineInput" name="deadline" class="field-input">
-                    <label class="deadline-toggle-wrap">
-                        <input type="checkbox" id="noDeadlineToggle">
-                        <span>No Limit (Leave test open indefinitely)</span>
-                    </label>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. Questions Container (Middle) -->
-        <div id="questionsContainer">
-            <div class="question-panel" id="qBlock_1">
-                <div class="q-header-strip">
-                    <span class="q-pill">Question 1</span>
-                    <button type="button" class="btn-trash" onclick="removeQuestion(1)" style="display:none;">✕ Delete</button>
-                </div>
-
-                <div class="field">
-                    <label class="field-label">Question Text</label>
-                    <textarea name="question" class="field-textarea" rows="2" placeholder="Formulate the prompt or question clearly..." required></textarea>
-                </div>
-
-                <label class="field-label" style="margin-top: 14px;">Answer Options (Select the green circle for the correct choice):</label>
-                <div class="option-choice-grid">
-                    <div class="option-row is-correct">
-                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="0" checked onchange="updateCorrectStyle(this)">
-                        <input type="text" name="option1" class="option-input" placeholder="Option A" required>
+    <form id="quizForm" action="/faculty/create-quiz" method="POST">
+        <!-- Top Sticky Header -->
+        <header class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-50">
+            <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-400 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
+                        ✍️
                     </div>
-                    <div class="option-row">
-                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="1" onchange="updateCorrectStyle(this)">
-                        <input type="text" name="option2" class="option-input" placeholder="Option B" required>
-                    </div>
-                    <div class="option-row">
-                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="2" onchange="updateCorrectStyle(this)">
-                        <input type="text" name="option3" class="option-input" placeholder="Option C" required>
-                    </div>
-                    <div class="option-row">
-                        <input type="radio" name="correctAnswer_0" class="radio-correct" value="3" onchange="updateCorrectStyle(this)">
-                        <input type="text" name="option4" class="option-input" placeholder="Option D" required>
+                    <div>
+                        <span class="font-extrabold text-lg tracking-tight text-white block leading-none">Assessment Studio</span>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Quiz Authoring Suite</span>
                     </div>
                 </div>
-                <input type="hidden" name="correctAnswer" value="0" class="actual-correct-val">
-            </div>
-        </div>
 
-        <!-- Add Question Button -->
-        <button type="button" class="btn-outline-add" onclick="addQuestion()">
-            + Append Another Question
-        </button>
-
-        <!-- 3. Overview & Launch Section (Bottom) -->
-        <section class="bottom-overview-card">
-            <div class="card-header-compact">
-                <h2>Assessment Overview & Launch</h2>
-            </div>
-
-            <div class="overview-metrics-grid">
-                <div>
-                    <span class="metric-title">Questions Created</span>
-                    <span class="metric-val" id="totalQuestionsCount">1</span>
-                </div>
-                <div>
-                    <span class="metric-title">Allocated Time</span>
-                    <span class="metric-val" id="timeSummary">15 Mins</span>
-                </div>
-                <div>
-                    <span class="metric-title">Expiry Schedule</span>
-                    <span class="metric-val" id="expirySummary">Specific Date</span>
+                <div class="flex items-center gap-3">
+                    <a href="/faculty/dashboard" 
+                       class="text-xs font-semibold text-slate-400 hover:text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 px-4 py-2.5 rounded-xl transition">
+                        Discard & Exit
+                    </a>
                 </div>
             </div>
+        </header>
 
-            <button type="submit" class="btn-publish-main">
-                Save & Launch Assessment →
+        <!-- Main Studio Body -->
+        <main class="max-w-4xl mx-auto px-6 py-10 space-y-8 relative z-10">
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-center gap-2.5">
+                    <span class="text-base shrink-0">⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <!-- 1. Metadata Configuration Card -->
+            <section class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        <h2 class="text-xs font-extrabold uppercase tracking-widest text-slate-300">Exam Parameters</h2>
+                    </div>
+                    <span class="text-xs text-slate-500 font-medium">Step 1: General Information</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Quiz Title</label>
+                        <input type="text" name="title" placeholder="e.g. Computer Networks Midterm" required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Subject / Course Code</label>
+                        <input type="text" name="subject" placeholder="e.g. CS-402 Distributed Systems" required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Duration (Minutes)</label>
+                        <div class="relative">
+                            <input type="number" id="durationInput" name="duration" value="15" min="1" max="300" required
+                                class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+                            <span class="absolute right-4 top-3.5 text-xs font-bold text-slate-500 pointer-events-none">MINS</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Submission Deadline</label>
+                        <input type="datetime-local" id="deadlineInput" name="deadline"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+                        
+                        <label class="inline-flex items-center gap-2 mt-2.5 cursor-pointer">
+                            <input type="checkbox" id="noDeadlineToggle" class="w-4 h-4 rounded bg-slate-950 border-slate-800 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs text-slate-400 font-medium">Leave assessment open indefinitely (No expiration date)</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Question Queue Header -->
+            <div class="flex items-center justify-between pt-2">
+                <div class="flex items-center gap-2">
+                    <span class="h-6 w-6 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-xs">#</span>
+                    <h3 class="text-base font-bold text-white">Questions Repository</h3>
+                </div>
+                <button type="button" onclick="addQuestion()" 
+                    class="bg-slate-900 hover:bg-slate-850 text-indigo-400 border border-indigo-500/30 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                    <span>+</span> Add Question Card
+                </button>
+            </div>
+
+            <!-- Dynamic Question Cards Container -->
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Primary Question Block 1 -->
+                <div class="question-panel bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6 transition hover:border-slate-700" id="qBlock_1">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <span class="q-pill inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-400">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> Question 1
+                        </span>
+                        <button type="button" class="btn-trash text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1 rounded-lg hover:bg-rose-950/30 transition hidden" onclick="removeQuestion(1)">
+                            Remove Question
+                        </button>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Question Statement</label>
+                        <textarea name="question" rows="2" placeholder="Formulate the prompt or problem statement clearly..." required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner"></textarea>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Answer Choices <span class="text-emerald-400 font-normal ml-1">(Mark the radio button of the correct answer)</span>
+                        </label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 option-choice-grid">
+                            <!-- Option A -->
+                            <div class="option-row flex items-center bg-slate-950 border border-emerald-500/60 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_0" value="0" checked onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">A</span>
+                                <input type="text" name="option1" placeholder="Option A statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+
+                            <!-- Option B -->
+                            <div class="option-row flex items-center bg-slate-950 border border-slate-800 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_0" value="1" onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">B</span>
+                                <input type="text" name="option2" placeholder="Option B statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+
+                            <!-- Option C -->
+                            <div class="option-row flex items-center bg-slate-950 border border-slate-800 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_0" value="2" onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">C</span>
+                                <input type="text" name="option3" placeholder="Option C statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+
+                            <!-- Option D -->
+                            <div class="option-row flex items-center bg-slate-950 border border-slate-800 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_0" value="3" onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">D</span>
+                                <input type="text" name="option4" placeholder="Option D statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="correctAnswer" value="0" class="actual-correct-val">
+                </div>
+            </div>
+
+            <!-- Add Question Dash Button -->
+            <button type="button" onclick="addQuestion()" 
+                class="w-full py-4 bg-slate-900/40 hover:bg-slate-900 text-indigo-400 hover:text-indigo-300 border-2 border-dashed border-slate-800 hover:border-indigo-500/40 rounded-3xl text-xs font-bold tracking-wider uppercase transition flex items-center justify-center gap-2">
+                <span>+</span> Add Another Question Module
             </button>
-        </section>
 
-    </div>
-</form>
+            <!-- 3. Launch Summary & Submit Card -->
+            <section class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h2 class="text-xs font-extrabold uppercase tracking-widest text-slate-300">Assessment Telemetry Preview</h2>
+                    <span class="text-xs text-emerald-400 font-bold">Ready to Publish</span>
+                </div>
 
-<script>
-// Deadline Logic
-const noDeadlineToggle = document.getElementById('noDeadlineToggle');
-const deadlineInput = document.getElementById('deadlineInput');
-const expirySummary = document.getElementById('expirySummary');
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 block mb-1">Total Questions</span>
+                        <span id="totalQuestionsCount" class="text-2xl font-black text-indigo-400 font-mono">1</span>
+                    </div>
 
-const now = new Date();
-now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-deadlineInput.min = now.toISOString().slice(0, 16);
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 block mb-1">Allocated Time</span>
+                        <span id="timeSummary" class="text-2xl font-black text-white font-mono">15 Mins</span>
+                    </div>
 
-noDeadlineToggle.addEventListener('change', (e) => {
-    if (e.target.checked) {
-        deadlineInput.value = '';
-        deadlineInput.disabled = true;
-        expirySummary.innerText = 'No Limit (Open)';
-    } else {
-        deadlineInput.disabled = false;
-        expirySummary.innerText = 'Specific Date';
-    }
-});
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 block mb-1">Submission Policy</span>
+                        <span id="expirySummary" class="text-xs font-bold text-slate-300 block mt-2">Open Schedule</span>
+                    </div>
+                </div>
 
-deadlineInput.addEventListener('change', () => {
-    if (deadlineInput.value) {
-        noDeadlineToggle.checked = false;
-        expirySummary.innerText = 'Timed Expiry';
-    }
-});
+                <button type="submit" 
+                    class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-600/25 transition-all duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                    ✓ Compile, Generate PIN & Launch Assessment →
+                </button>
+            </section>
 
-// Live Duration Sync
-const durationInput = document.getElementById('durationInput');
-const timeSummary = document.getElementById('timeSummary');
-durationInput.addEventListener('input', () => {
-    timeSummary.innerText = `${durationInput.value || 0} Mins`;
-});
+        </main>
+    </form>
 
-// Correct Answer Highlighting
-function updateCorrectStyle(radio) {
-    const parentGrid = radio.closest('.option-choice-grid');
-    parentGrid.querySelectorAll('.option-row').forEach(row => row.classList.remove('is-correct'));
-    radio.closest('.option-row').classList.add('is-correct');
-    
-    const panel = radio.closest('.question-panel');
-    panel.querySelector('.actual-correct-val').value = radio.value;
-}
+    <script>
+        // Synchronize Deadline Controls
+        const noDeadlineToggle = document.getElementById('noDeadlineToggle');
+        const deadlineInput = document.getElementById('deadlineInput');
+        const expirySummary = document.getElementById('expirySummary');
 
-// Dynamic Question Management
-function reindex() {
-    const panels = document.querySelectorAll('.question-panel');
-    const count = panels.length;
-    document.getElementById('totalQuestionsCount').innerText = count;
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        deadlineInput.min = now.toISOString().slice(0, 16);
 
-    panels.forEach((p, idx) => {
-        const num = idx + 1;
-        p.id = `qBlock_${num}`;
-        p.querySelector('.q-pill').innerText = `Question ${num}`;
-        
-        p.querySelectorAll('.radio-correct').forEach(r => {
-            r.name = `correctAnswer_${idx}`;
+        noDeadlineToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                deadlineInput.value = '';
+                deadlineInput.disabled = true;
+                deadlineInput.classList.add('opacity-40');
+                expirySummary.innerText = 'Indefinite (Open)';
+            } else {
+                deadlineInput.disabled = false;
+                deadlineInput.classList.remove('opacity-40');
+                expirySummary.innerText = deadlineInput.value ? 'Timed Deadline' : 'Open Schedule';
+            }
         });
 
-        const delBtn = p.querySelector('.btn-trash');
-        delBtn.style.display = count > 1 ? 'inline-block' : 'none';
-        delBtn.setAttribute('onclick', `removeQuestion(${num})`);
-    });
-}
+        deadlineInput.addEventListener('change', () => {
+            if (deadlineInput.value) {
+                noDeadlineToggle.checked = false;
+                expirySummary.innerText = 'Timed Deadline';
+            }
+        });
 
-function addQuestion() {
-    const panels = document.querySelectorAll('.question-panel');
-    const nextIdx = panels.length;
-    const nextNum = nextIdx + 1;
+        // Synchronize Live Duration
+        const durationInput = document.getElementById('durationInput');
+        const timeSummary = document.getElementById('timeSummary');
+        durationInput.addEventListener('input', () => {
+            timeSummary.innerText = `${durationInput.value || 0} Mins`;
+        });
 
-    const html = `
-        <div class="question-panel" id="qBlock_${nextNum}">
-            <div class="q-header-strip">
-                <span class="q-pill">Question ${nextNum}</span>
-                <button type="button" class="btn-trash" onclick="removeQuestion(${nextNum})">✕ Delete</button>
-            </div>
+        // Answer Key Styling Toggle
+        function updateCorrectStyle(radio) {
+            const parentGrid = radio.closest('.option-choice-grid');
+            parentGrid.querySelectorAll('.option-row').forEach(row => {
+                row.classList.remove('border-emerald-500/60');
+                row.classList.add('border-slate-800');
+            });
+            
+            const selectedRow = radio.closest('.option-row');
+            selectedRow.classList.remove('border-slate-800');
+            selectedRow.classList.add('border-emerald-500/60');
+            
+            const panel = radio.closest('.question-panel');
+            panel.querySelector('.actual-correct-val').value = radio.value;
+        }
 
-            <div class="field">
-                <label class="field-label">Question Text</label>
-                <textarea name="question" class="field-textarea" rows="2" placeholder="Formulate the prompt or question clearly..." required></textarea>
-            </div>
+        // Reindex Dynamic Panels
+        function reindex() {
+            const panels = document.querySelectorAll('.question-panel');
+            const count = panels.length;
+            document.getElementById('totalQuestionsCount').innerText = count;
 
-            <label class="field-label" style="margin-top: 14px;">Answer Options (Select the green circle for the correct choice):</label>
-            <div class="option-choice-grid">
-                <div class="option-row is-correct">
-                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="0" checked onchange="updateCorrectStyle(this)">
-                    <input type="text" name="option1" class="option-input" placeholder="Option A" required>
+            panels.forEach((p, idx) => {
+                const num = idx + 1;
+                p.id = `qBlock_${num}`;
+                p.querySelector('.q-pill').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> Question ${num}`;
+                
+                p.querySelectorAll('.radio-correct').forEach(r => {
+                    r.name = `correctAnswer_${idx}`;
+                });
+
+                const delBtn = p.querySelector('.btn-trash');
+                if (count > 1) {
+                    delBtn.classList.remove('hidden');
+                } else {
+                    delBtn.classList.add('hidden');
+                }
+                delBtn.setAttribute('onclick', `removeQuestion(${num})`);
+            });
+        }
+
+        // Add Question Functionality
+        function addQuestion() {
+            const panels = document.querySelectorAll('.question-panel');
+            const nextIdx = panels.length;
+            const nextNum = nextIdx + 1;
+
+            const html = `
+                <div class="question-panel bg-slate-900/80 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6 transition hover:border-slate-700" id="qBlock_${nextNum}">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <span class="q-pill inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-indigo-400">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> Question ${nextNum}
+                        </span>
+                        <button type="button" class="btn-trash text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1 rounded-lg hover:bg-rose-950/30 transition" onclick="removeQuestion(${nextNum})">
+                            Remove Question
+                        </button>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Question Statement</label>
+                        <textarea name="question" rows="2" placeholder="Formulate the prompt or problem statement clearly..." required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner"></textarea>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Answer Choices <span class="text-emerald-400 font-normal ml-1">(Mark the radio button of the correct answer)</span>
+                        </label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 option-choice-grid">
+                            <div class="option-row flex items-center bg-slate-950 border border-emerald-500/60 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_${nextIdx}" value="0" checked onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">A</span>
+                                <input type="text" name="option1" placeholder="Option A statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+
+                            <div class="option-row flex items-center bg-slate-950 border border-slate-800 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_${nextIdx}" value="1" onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">B</span>
+                                <input type="text" name="option2" placeholder="Option B statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+
+                            <div class="option-row flex items-center bg-slate-950 border border-slate-800 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_${nextIdx}" value="2" onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">C</span>
+                                <input type="text" name="option3" placeholder="Option C statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+
+                            <div class="option-row flex items-center bg-slate-950 border border-slate-800 rounded-2xl p-2.5 transition">
+                                <input type="radio" name="correctAnswer_${nextIdx}" value="3" onchange="updateCorrectStyle(this)"
+                                    class="radio-correct w-4 h-4 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700 ml-2 cursor-pointer">
+                                <span class="h-8 w-8 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 flex items-center justify-center font-bold text-xs shrink-0 ml-2">D</span>
+                                <input type="text" name="option4" placeholder="Option D statement" required
+                                    class="w-full bg-transparent px-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="correctAnswer" value="0" class="actual-correct-val">
                 </div>
-                <div class="option-row">
-                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="1" onchange="updateCorrectStyle(this)">
-                    <input type="text" name="option2" class="option-input" placeholder="Option B" required>
-                </div>
-                <div class="option-row">
-                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="2" onchange="updateCorrectStyle(this)">
-                    <input type="text" name="option3" class="option-input" placeholder="Option C" required>
-                </div>
-                <div class="option-row">
-                    <input type="radio" name="correctAnswer_${nextIdx}" class="radio-correct" value="3" onchange="updateCorrectStyle(this)">
-                    <input type="text" name="option4" class="option-input" placeholder="Option D" required>
-                </div>
-            </div>
-            <input type="hidden" name="correctAnswer" value="0" class="actual-correct-val">
-        </div>
-    `;
+            `;
 
-    document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
-    reindex();
+            document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
+            reindex();
 
-    const newlyAdded = document.getElementById(`qBlock_${nextNum}`);
-    newlyAdded.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
+            const newlyAdded = document.getElementById(`qBlock_${nextNum}`);
+            newlyAdded.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
 
-function removeQuestion(index) {
-    const el = document.getElementById(`qBlock_${index}`);
-    if (el) {
-        el.remove();
-        reindex();
-    }
-}
-</script>
-
+        function removeQuestion(index) {
+            const el = document.getElementById(`qBlock_${index}`);
+            if (el) {
+                el.remove();
+                reindex();
+            }
+        }
+    </script>
 </body>
 </html>

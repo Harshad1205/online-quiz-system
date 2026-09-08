@@ -3,129 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal - Sign In</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Administrator Login — AcademiQuiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0f172a;
-            margin: 0;
-            padding: 50px 20px;
-        }
-        .admin-login-box {
-            max-width: 400px;
-            margin: auto;
-            background: #1e293b;
-            padding: 35px 30px;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            color: #f8fafc;
-            border: 1px solid #334155;
-        }
-        h2 {
-            margin-top: 0;
-            color: #f8fafc;
-            text-align: center;
-        }
-        .badge-admin {
-            display: block;
-            text-align: center;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #38bdf8;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #cbd5e1;
-        }
-        input[type="email"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            background: #0f172a;
-            border: 1px solid #475569;
-            color: #ffffff;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        input[type="email"]:focus, input[type="password"]:focus {
-            outline: none;
-            border-color: #38bdf8;
-        }
-        .alert-error {
-            background-color: #450a0a;
-            color: #fca5a5;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            border: 1px solid #7f1d1d;
-        }
-        .btn-admin {
-            width: 100%;
-            background-color: #0284c7;
-            color: #ffffff;
-            padding: 11px;
-            border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-admin:hover {
-            background-color: #0369a1;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #94a3b8;
-            font-size: 13px;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            color: #f8fafc;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white relative overflow-hidden">
 
-<div class="admin-login-box">
-    <h2>🛡️ Control Center</h2>
-    <span class="badge-admin">Authorized Administrators Only</span>
+    <!-- Ambient Gradient Backdrops -->
+    <div class="absolute -top-32 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert-error">
-            <%= error %>
+    <div class="max-w-md w-full relative z-10 py-6">
+        
+        <!-- Header Branding -->
+        <div class="text-center mb-8">
+            <a href="/" class="inline-block transition-transform hover:scale-105">
+                <div class="h-14 w-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-sky-400 text-white flex items-center justify-center font-extrabold text-2xl mx-auto shadow-xl shadow-indigo-500/20 ring-1 ring-white/20 mb-4">
+                    🛡️
+                </div>
+            </a>
+            <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">Department Control Center</h1>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[11px] font-bold uppercase tracking-wider mt-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping"></span>
+                Authorized Administrators Only
+            </div>
         </div>
-    <% } %>
 
-    <form action="/admin/login" method="POST">
-        <div class="form-group">
-            <label for="email">Admin Email</label>
-            <input type="email" id="email" name="email" placeholder="admin@college.edu.in" required>
+        <!-- Card Container -->
+        <div class="bg-slate-900/90 border border-slate-800/90 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl space-y-6">
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-center gap-2.5 animate-shake">
+                    <span class="text-base shrink-0">⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <form action="/admin/login" method="POST" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Admin Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="admin@college.edu.in" 
+                        required
+                        class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        required
+                        class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner"
+                    >
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="w-full mt-2 bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-indigo-600/25 transition-all duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                    Authenticate & Enter Control Center →
+                </button>
+            </form>
+
+            <div class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <a href="/faculty/login" class="text-indigo-400 hover:text-indigo-300 font-semibold transition">
+                    ← Switch to Faculty Portal
+                </a>
+                <a href="/" class="text-slate-500 hover:text-slate-300 font-medium transition">
+                    Portal Home
+                </a>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="••••••••" required>
-        </div>
-
-        <button type="submit" class="btn-admin">Authenticate & Login</button>
-    </form>
-
-    <a href="/faculty/login" class="back-link">← Switch to Faculty Portal</a>
-</div>
+        <p class="text-center text-[11px] text-slate-600 mt-6 font-medium">
+            Administrative Core • Elevated Clearance Required
+        </p>
+    </div>
 
 </body>
 </html>
