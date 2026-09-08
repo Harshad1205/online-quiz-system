@@ -10,7 +10,7 @@ require('dotenv').config();
 const Admin = require('./models/Admin');
 const Faculty = require('./models/Faculty');
 const Quiz = require('./models/Quiz');
-const Result = require('./models/result');
+const Result = require('./models/Result'); // Fixed case-sensitivity for Linux/Render
 
 const app = express();
 
@@ -95,7 +95,7 @@ app.get('/admin/login', (req, res) => {
     res.render('admin-login', { error: null });
 });
 
-app.post('/admin/login', async (req, res) => {
+app.post('/admin/login', async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -118,12 +118,11 @@ app.post('/admin/login', async (req, res) => {
 
         res.redirect('/admin/approvals');
     } catch (error) {
-        console.error('Admin Login Error:', error);
-        res.render('admin-login', { error: 'Authentication failed. Please try again.' });
+        next(error);
     }
 });
 
-app.get('/admin/approvals', isAdminLoggedIn, async (req, res) => {
+app.get('/admin/approvals', isAdminLoggedIn, async (req, res, next) => {
     try {
         const pendingFaculty = await Faculty.find({ isApproved: false }).sort({ createdAt: -1 }).lean();
         const approvedFaculty = await Faculty.find({ isApproved: true }).sort({ createdAt: -1 }).lean();
@@ -134,28 +133,25 @@ app.get('/admin/approvals', isAdminLoggedIn, async (req, res) => {
             adminName: req.session.adminName || 'Department Head'
         });
     } catch (error) {
-        console.error('Admin Approvals Queue Error:', error);
-        res.status(500).send('Error loading approvals queue.');
+        next(error);
     }
 });
 
-app.post('/admin/approve-faculty/:id', isAdminLoggedIn, async (req, res) => {
+app.post('/admin/approve-faculty/:id', isAdminLoggedIn, async (req, res, next) => {
     try {
         await Faculty.findByIdAndUpdate(req.params.id, { isApproved: true });
         res.redirect('/admin/approvals');
     } catch (error) {
-        console.error('Approve Faculty Error:', error);
-        res.redirect('/admin/approvals');
+        next(error);
     }
 });
 
-app.post('/admin/reject-faculty/:id', isAdminLoggedIn, async (req, res) => {
+app.post('/admin/reject-faculty/:id', isAdminLoggedIn, async (req, res, next) => {
     try {
         await Faculty.findByIdAndDelete(req.params.id);
         res.redirect('/admin/approvals');
     } catch (error) {
-        console.error('Reject Faculty Error:', error);
-        res.redirect('/admin/approvals');
+        next(error);
     }
 });
 
@@ -172,7 +168,7 @@ app.get('/faculty/register', (req, res) => {
     res.render('faculty-register', { error: null });
 });
 
-app.post('/faculty/register', async (req, res) => {
+app.post('/faculty/register', async (req, res, next) => {
     try {
         const { name, email, password, secretKey } = req.body;
 
@@ -212,10 +208,7 @@ app.post('/faculty/register', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Registration Error:', error);
-        return res.status(500).render('faculty-register', { 
-            error: error.message || 'An unexpected error occurred during registration.' 
-        });
+        next(error);
     }
 });
 
@@ -223,7 +216,7 @@ app.get('/faculty/login', (req, res) => {
     res.render('faculty-login', { error: null, info: null });
 });
 
-app.post('/faculty/login', async (req, res) => {
+app.post('/faculty/login', async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -250,8 +243,7 @@ app.post('/faculty/login', async (req, res) => {
 
         res.redirect('/faculty/dashboard');
     } catch (error) {
-        console.error('Faculty Login Error:', error);
-        res.render('faculty-login', { error: 'Login failed. Please try again.', info: null });
+        next(error);
     }
 });
 
@@ -264,27 +256,38 @@ app.get('/faculty/logout', (req, res) => {
 // ========================================
 // FACULTY DASHBOARD & QUIZ MANAGEMENT
 // ========================================
-app.get('/faculty/dashboard', isFacultyLoggedIn, async (req, res) => {
+app.get('/faculty/dashboard', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const facultyId = req.session.facultyId;
 
-        // Support both ObjectId and raw string formats defensively
-        const query = mongoose.Types.ObjectId.isValid(facultyId)
-            ? { $or: [{ faculty: new mongoose.Types.ObjectId(facultyId) }, { faculty: facultyId }] }
-            : { faculty: facultyId };
+        let query = { faculty: facultyId };
+        if (mongoose.Types.ObjectId.isValid(facultyId)) {
+            query = {
+                $or: [
+                    { faculty: facultyId },
+                    { faculty: new mongoose.Types.ObjectId(facultyId) }
+                ]
+            };
+        }
 
-        const quizzes = await Quiz.find(query).sort({ createdAt: -1 }).lean();
+        const rawQuizzes = await Quiz.find(query).sort({ createdAt: -1 }).lean();
+
+        const quizzes = (rawQuizzes || []).map(q => ({
+            ...q,
+            title: q.title || 'Untitled Assessment',
+            subject: q.subject || 'General',
+            quizCode: q.quizCode || '------',
+            duration: q.duration || 10,
+            deadline: q.deadline || null,
+            questions: Array.isArray(q.questions) ? q.questions : []
+        }));
 
         res.render('dashboard', {
             facultyName: req.session.facultyName || 'Faculty Member',
-            quizzes: Array.isArray(quizzes) ? quizzes : []
+            quizzes
         });
     } catch (err) {
-        console.error('Dashboard Error:', err);
-        res.status(500).render('faculty-login', {
-            error: 'Session expired or database error. Please sign in again.',
-            info: null
-        });
+        next(err);
     }
 });
 
@@ -292,7 +295,7 @@ app.get('/faculty/create-quiz', isFacultyLoggedIn, (req, res) => {
     res.render('create-quiz', { error: null });
 });
 
-app.post('/faculty/create-quiz', isFacultyLoggedIn, async (req, res) => {
+app.post('/faculty/create-quiz', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const {
             title,
@@ -367,14 +370,11 @@ app.post('/faculty/create-quiz', isFacultyLoggedIn, async (req, res) => {
         res.redirect('/faculty/dashboard');
 
     } catch (error) {
-        console.error('Quiz Creation Error:', error);
-        res.status(500).render('create-quiz', {
-            error: error.code === 11000 ? 'Quiz Code collision. Please try submitting again.' : error.message
-        });
+        next(error);
     }
 });
 
-app.get('/faculty/edit-quiz/:id', isFacultyLoggedIn, async (req, res) => {
+app.get('/faculty/edit-quiz/:id', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const quiz = await Quiz.findOne({
             _id: req.params.id,
@@ -387,12 +387,11 @@ app.get('/faculty/edit-quiz/:id', isFacultyLoggedIn, async (req, res) => {
 
         res.render('edit-quiz', { quiz });
     } catch (error) {
-        console.error('Edit Quiz Fetch Error:', error);
-        res.status(500).send('Error loading edit interface.');
+        next(error);
     }
 });
 
-app.post('/faculty/edit-quiz/:id', isFacultyLoggedIn, async (req, res) => {
+app.post('/faculty/edit-quiz/:id', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const {
             title,
@@ -446,12 +445,11 @@ app.post('/faculty/edit-quiz/:id', isFacultyLoggedIn, async (req, res) => {
 
         res.redirect('/faculty/dashboard');
     } catch (error) {
-        console.error('Error updating quiz:', error);
-        res.status(500).send('Error synchronizing quiz updates.');
+        next(error);
     }
 });
 
-app.post('/faculty/delete-quiz/:id', isFacultyLoggedIn, async (req, res) => {
+app.post('/faculty/delete-quiz/:id', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const quiz = await Quiz.findOne({
             _id: req.params.id,
@@ -467,13 +465,12 @@ app.post('/faculty/delete-quiz/:id', isFacultyLoggedIn, async (req, res) => {
 
         res.redirect('/faculty/dashboard');
     } catch (error) {
-        console.error('Delete Quiz Error:', error);
-        res.redirect('/faculty/dashboard');
+        next(error);
     }
 });
 
 // View Submissions and Telemetry
-app.get('/faculty/quiz-results/:id', isFacultyLoggedIn, async (req, res) => {
+app.get('/faculty/quiz-results/:id', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const quiz = await Quiz.findOne({
             _id: req.params.id,
@@ -484,24 +481,32 @@ app.get('/faculty/quiz-results/:id', isFacultyLoggedIn, async (req, res) => {
             return res.status(404).send('Quiz not found or unauthorized.');
         }
 
-        const results = await Result.find({
+        const rawResults = await Result.find({
             quiz: quiz._id
         }).sort({
             score: -1,
             submittedAt: -1
         }).lean();
 
-        res.render('quiz-results', { quiz, results: results || [] });
+        const results = (rawResults || []).map(r => ({
+            ...r,
+            studentName: r.studentName || 'Student',
+            studentEmail: r.studentEmail || 'N/A',
+            score: typeof r.score === 'number' ? r.score : 0,
+            totalQuestions: r.totalQuestions || (quiz.questions ? quiz.questions.length : 1),
+            answers: Array.isArray(r.answers) ? r.answers : []
+        }));
+
+        res.render('quiz-results', { quiz, results });
     } catch (error) {
-        console.error('Load Results Error:', error);
-        res.status(500).send('Error loading submission analytics.');
+        next(error);
     }
 });
 
 // =========================================================
 // EXCEL DATABASE EXPORT ROUTE (WITH DETAILED CHOICES)
 // =========================================================
-app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
+app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res, next) => {
     try {
         const quiz = await Quiz.findOne({
             _id: req.params.id,
@@ -607,8 +612,7 @@ app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
         res.end();
 
     } catch (error) {
-        console.error('Excel Export Error:', error);
-        res.status(500).send('Failed to generate Excel report: ' + error.message);
+        next(error);
     }
 });
 
@@ -619,7 +623,7 @@ app.get('/join', (req, res) => {
     res.render('join-quiz', { error: null });
 });
 
-app.post('/join', async (req, res) => {
+app.post('/join', async (req, res, next) => {
     try {
         const { studentName, studentEmail, quizCode } = req.body;
         const email = (studentEmail || '').toLowerCase().trim();
@@ -653,12 +657,11 @@ app.post('/join', async (req, res) => {
 
         res.redirect(`/exam/${quiz._id}`);
     } catch (error) {
-        console.error('Student Join Error:', error);
-        res.render('join-quiz', { error: 'Unable to initiate assessment session.' });
+        next(error);
     }
 });
 
-app.get('/exam/:id', async (req, res) => {
+app.get('/exam/:id', async (req, res, next) => {
     try {
         if (!req.session || !req.session.studentName || req.session.examQuizId !== req.params.id) {
             return res.redirect('/join');
@@ -678,12 +681,11 @@ app.get('/exam/:id', async (req, res) => {
             studentName: req.session.studentName
         });
     } catch (error) {
-        console.error('Exam Room Error:', error);
-        res.status(500).send('Error loading examination room.');
+        next(error);
     }
 });
 
-app.post('/exam/:id/submit', async (req, res) => {
+app.post('/exam/:id/submit', async (req, res, next) => {
     try {
         if (!req.session || !req.session.studentName) {
             return res.redirect('/join');
@@ -764,9 +766,23 @@ app.post('/exam/:id/submit', async (req, res) => {
             submittedAt
         });
     } catch (error) {
-        console.error('Exam Submission Error:', error);
-        res.status(500).send('Error recording exam submission.');
+        next(error);
     }
+});
+
+// ========================================
+// GLOBAL DIAGNOSTIC ERROR HANDLER
+// ========================================
+app.use((err, req, res, next) => {
+    console.error('🔥 CRITICAL ERROR TRACE:', err);
+    res.status(500).send(`
+        <div style="font-family: sans-serif; padding: 30px; background: #0f172a; color: #f87171; min-height: 100vh;">
+            <h1 style="color: #ef4444; margin-top: 0;">500 — Application Runtime Error</h1>
+            <p style="color: #cbd5e1; font-size: 16px;"><strong>Error Message:</strong> ${err.message}</p>
+            <p style="color: #94a3b8; font-size: 13px;"><strong>Route:</strong> ${req.method} ${req.originalUrl}</p>
+            <pre style="background: #1e293b; color: #38bdf8; padding: 20px; border-radius: 10px; overflow-x: auto; font-size: 13px; line-height: 1.5; border: 1px solid #334155;">${err.stack}</pre>
+        </div>
+    `);
 });
 
 // ========================================
