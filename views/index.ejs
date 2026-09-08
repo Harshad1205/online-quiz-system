@@ -1,521 +1,272 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Institutional Examination & Assessment Management System</title>
+    <title>EduAssessment — Institutional Examination & Telemetry Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --surface: #ffffff;
-            --bg-canvas: #f8fafc;
-            --border-ui: #e2e8f0;
-            --text-heading: #0f172a;
-            --text-body: #475569;
-            --text-subtle: #94a3b8;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-canvas);
-            color: var(--text-body);
-            line-height: 1.6;
-        }
-
-        /* Top Institutional Nav Bar */
-        .site-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--border-ui);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--text-heading);
-            font-weight: 800;
-            font-size: 19px;
-            letter-spacing: -0.02em;
-        }
-
-        .brand-badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-body);
-            font-size: 14px;
-            font-weight: 600;
-            transition: color 0.15s;
-        }
-
-        .nav-links a:hover { color: var(--primary); }
-
-        .btn-nav-action {
-            background: var(--primary);
-            color: #fff !important;
-            padding: 8px 18px;
-            border-radius: 8px;
-            transition: background-color 0.15s;
-        }
-
-        .btn-nav-action:hover { background: var(--primary-dark); }
-
-        /* Hero Section */
-        .hero {
-            padding: 70px 24px 50px;
-            text-align: center;
-            background: linear-gradient(180deg, #ffffff 0%, var(--bg-canvas) 100%);
-            border-bottom: 1px solid var(--border-ui);
-        }
-
-        .hero-inner { max-width: 860px; margin: auto; }
-
-        .system-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #f1f5f9;
-            border: 1px solid var(--border-ui);
-            padding: 6px 14px;
-            border-radius: 9999px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 24px;
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background: #16a34a;
-            border-radius: 50%;
-            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
-        }
-
-        .hero-title {
-            font-size: clamp(32px, 4.5vw, 50px);
-            font-weight: 800;
-            color: var(--text-heading);
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-            margin-bottom: 20px;
-        }
-
-        .hero-subtitle {
-            font-size: 18px;
-            color: var(--text-body);
-            max-width: 680px;
-            margin: auto;
-        }
-
-        /* Main Gateway Cards */
-        .portal-grid {
-            max-width: 1200px;
-            margin: -40px auto 60px;
-            padding: 0 24px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 28px;
-        }
-
-        @media (max-width: 960px) {
-            .portal-grid {
-                grid-template-columns: 1fr;
-                margin-top: 30px;
-            }
-        }
-
-        .portal-card {
-            background: var(--surface);
-            border: 1px solid var(--border-ui);
-            border-radius: 16px;
-            padding: 34px 28px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .portal-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 24px -6px rgba(0,0,0,0.08);
-        }
-
-        .card-student:hover { border-color: #10b981; }
-        .card-faculty:hover { border-color: #2563eb; }
-        .card-admin:hover { border-color: #7c3aed; }
-
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 22px;
-        }
-
-        .icon-student { background: rgba(16, 185, 129, 0.12); }
-        .icon-faculty { background: rgba(37, 99, 235, 0.12); }
-        .icon-admin { background: rgba(124, 58, 237, 0.12); }
-
-        .card-title {
-            font-size: 21px;
-            font-weight: 700;
-            color: var(--text-heading);
-            margin-bottom: 10px;
-        }
-
-        .card-desc {
-            font-size: 14px;
-            color: var(--text-body);
-            line-height: 1.6;
-            margin-bottom: 24px;
-        }
-
-        .card-features {
-            list-style: none;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            font-size: 13px;
-            color: #334155;
-        }
-
-        .card-features li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .check-icon {
-            color: #16a34a;
-            font-weight: bold;
-        }
-
-        .btn-portal {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 13px 18px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.15s;
-            border: 1px solid transparent;
-        }
-
-        .btn-green { background: #10b981; color: #fff; }
-        .btn-green:hover { background: #059669; }
-
-        .btn-blue { background: #2563eb; color: #fff; }
-        .btn-blue:hover { background: #1d4ed8; }
-
-        .btn-purple { background: #7c3aed; color: #fff; }
-        .btn-purple:hover { background: #6d28d9; }
-
-        .btn-outline {
-            background: #f8fafc;
-            color: #334155;
-            border-color: var(--border-ui);
-            margin-top: 10px;
-        }
-        .btn-outline:hover { background: #f1f5f9; }
-
-        /* Institutional Highlights Banner */
-        .metrics-banner {
-            max-width: 1200px;
-            margin: 0 auto 70px;
-            padding: 0 24px;
-        }
-
-        .metrics-inner {
-            background: #ffffff;
-            border: 1px solid var(--border-ui);
-            border-radius: 16px;
-            padding: 36px 40px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .metrics-inner { grid-template-columns: 1fr 1fr; }
-        }
-
-        .metric-item h4 {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--text-heading);
-            margin-bottom: 4px;
-        }
-
-        .metric-item p {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-subtle);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Contact & Information Section */
-        .info-section {
-            background: #ffffff;
-            border-top: 1px solid var(--border-ui);
-            border-bottom: 1px solid var(--border-ui);
-            padding: 60px 24px;
-        }
-
-        .info-container {
-            max-width: 1200px;
-            margin: auto;
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr;
-            gap: 40px;
-        }
-
-        @media (max-width: 860px) {
-            .info-container { grid-template-columns: 1fr; }
-        }
-
-        .info-col h4 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-heading);
-            margin-bottom: 16px;
-        }
-
-        .info-col p {
-            font-size: 14px;
-            color: var(--text-body);
-            line-height: 1.7;
-        }
-
-        .contact-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            font-size: 14px;
-        }
-
-        .contact-list li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-body);
-        }
-
-        .contact-list a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        /* Footer */
-        .site-footer {
-            background: var(--bg-canvas);
-            padding: 30px 24px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-subtle);
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white relative overflow-x-hidden antialiased">
 
-    <!-- Header Navigation Bar -->
-    <header class="site-header">
-        <div class="nav-container">
-            <a href="/" class="brand-logo">
-                <span>🏛️</span>
-                <span>EduAssessment Portal</span>
-                <span class="brand-badge">Academic v2.6</span>
+    <!-- Ambient Glow Effects -->
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[650px] h-[350px] bg-gradient-to-tr from-indigo-600/20 via-sky-500/15 to-emerald-500/10 blur-[130px] pointer-events-none rounded-full"></div>
+    <div class="absolute top-[45%] -left-32 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute top-[75%] -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <!-- Navigation Header -->
+    <nav class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-50 transition">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center font-extrabold text-white shadow-lg shadow-indigo-600/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-200">
+                    🏛️
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-black text-lg tracking-tight text-white leading-none">EduAssessment</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">v2.6</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold block mt-0.5">Academic Examination Cloud</span>
+                </div>
             </a>
-            <ul class="nav-links">
-                <li><a href="#portals">Access Portals</a></li>
-                <li><a href="#highlights">Features</a></li>
-                <li><a href="#contact">Contact Support</a></li>
-                <li><a href="/join" class="btn-nav-action">Join Live Test</a></li>
-            </ul>
-        </div>
-    </header>
 
-    <!-- Main Hero -->
-    <section class="hero">
-        <div class="hero-inner">
-            <div class="system-status">
-                <span class="pulse-dot"></span>
-                Examination Engine Online & Real-time Verified
+            <div class="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-300">
+                <a href="#portals" class="hover:text-white transition">Access Gateways</a>
+                <a href="#telemetry" class="hover:text-white transition">Platform Telemetry</a>
+                <a href="#contact" class="hover:text-white transition">Regulatory Cell</a>
             </div>
-            <h1 class="hero-title">Automated Examination & Assessment Portal</h1>
-            <p class="hero-subtitle">
-                Institutional testing software providing real-time question deployment, compliance monitoring, and instant Excel grade-sheet export.
+
+            <div class="flex items-center gap-3">
+                <a href="/join" class="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 active:scale-95 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-slate-950 animate-pulse"></span> Enter Exam Room
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative z-10">
+
+        <!-- Hero Section -->
+        <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center space-y-6">
+            
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 shadow-xl backdrop-blur-md">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-medium text-slate-400">Status:</span>
+                <span class="font-bold text-slate-200">Institutional Server Active & Monitored</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.15]">
+                Precision Assessment & <br class="hidden sm:inline" />
+                <span class="bg-gradient-to-r from-indigo-400 via-sky-300 to-emerald-400 bg-clip-text text-transparent">
+                    Automated Evaluation Engine
+                </span>
+            </h1>
+
+            <p class="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                Empowering faculty with real-time question deployment, fraud-deterrent timers, granular candidate answer telemetry, and instant departmental grade-sheet exports.
             </p>
-        </div>
-    </section>
 
-    <!-- Operational Gateways -->
-    <section class="portal-grid" id="portals">
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-4">
+                <a href="/join" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-xl shadow-indigo-600/30 transition-all active:scale-95 flex items-center gap-2">
+                    ✍️ Take Exam with PIN
+                </a>
+                <a href="/faculty/login" class="bg-slate-900 hover:bg-slate-850 text-slate-200 border border-slate-800 font-bold text-xs px-6 py-3.5 rounded-2xl transition hover:border-slate-700">
+                    🎓 Faculty Terminal →
+                </a>
+            </div>
+        </section>
 
-        <!-- 1. Student Portal -->
-        <div class="portal-card card-student">
-            <div>
-                <div class="card-icon icon-student">✍️</div>
-                <h3 class="card-title">Student Room</h3>
-                <p class="card-desc">Enter scheduled examinations using an institutional test code. Real-time timer and secure submission tracking active.</p>
-                <ul class="card-features">
-                    <li><span class="check-icon">✓</span> Rapid session enrollment via Quiz PIN</li>
-                    <li><span class="check-icon">✓</span> Automated timer expiry enforcement</li>
-                    <li><span class="check-icon">✓</span> Instant provisional score verification</li>
-                </ul>
+        <!-- Access Portals Grid -->
+        <section class="max-w-7xl mx-auto px-6 py-12" id="portals">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-2">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Security Gateways</span>
+                    <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">Authorized Access Portals</h2>
+                </div>
+                <p class="text-xs text-slate-400">Strict end-to-end compartmentalization by academic role</p>
             </div>
-            <div>
-                <a href="/join" class="btn-portal btn-green">Enter Test Room →</a>
-            </div>
-        </div>
 
-        <!-- 2. Faculty Dashboard -->
-        <div class="portal-card card-faculty">
-            <div>
-                <div class="card-icon icon-faculty">🎓</div>
-                <h3 class="card-title">Faculty Portal</h3>
-                <p class="card-desc">Design MCQ assessments, configure strict deadlines, view live analytics, and export student records to Excel.</p>
-                <ul class="card-features">
-                    <li><span class="check-icon">✓</span> Dynamic multi-question creator</li>
-                    <li><span class="check-icon">✓</span> Exportable student Excel grade database</li>
-                    <li><span class="check-icon">✓</span> Gated institutional passcode protection</li>
-                </ul>
-            </div>
-            <div>
-                <a href="/faculty/login" class="btn-portal btn-blue">Instructor Login</a>
-                <a href="/faculty/register" class="btn-portal btn-outline">Register with Department Key</a>
-            </div>
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <!-- 3. Admin / HOD Control -->
-        <div class="portal-card card-admin">
-            <div>
-                <div class="card-icon icon-admin">🛡️</div>
-                <h3 class="card-title">Admin & HOD Gate</h3>
-                <p class="card-desc">Supervisory approval dashboard for department chairs and college administrators to verify and authorize instructors.</p>
-                <ul class="card-features">
-                    <li><span class="check-icon">✓</span> Faculty identity verification queue</li>
-                    <li><span class="check-icon">✓</span> One-click approval / revocation controls</li>
-                    <li><span class="check-icon">✓</span> Institutional system security oversight</li>
-                </ul>
-            </div>
-            <div>
-                <a href="/admin/login" class="btn-portal btn-purple">Administrator Portal →</a>
-            </div>
-        </div>
+                <!-- 1. Student Portal -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-3xl p-7 backdrop-blur-xl shadow-xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold group-hover:scale-105 transition-transform">
+                            ✍️
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">Student Candidate Gate</h3>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                Join active tests via secure session PIN codes with persistent timers and real-time state sync.
+                            </p>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400 font-bold">✓</span> Fast session entry via 6-digit PIN
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400 font-bold">✓</span> Anti-tamper countdown timer
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400 font-bold">✓</span> Instant provisional score calculation
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-8">
+                        <a href="/join" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                            Enter Student Room →
+                        </a>
+                    </div>
+                </div>
 
-    </section>
+                <!-- 2. Faculty Portal -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-3xl p-7 backdrop-blur-xl shadow-xl hover:border-indigo-500/50 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl font-bold group-hover:scale-105 transition-transform">
+                            🎓
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">Faculty Authoring Studio</h3>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                Author assessments, configure strict deadlines, inspect granular choice telemetry, and generate Excel reports.
+                            </p>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+                            <li class="flex items-center gap-2">
+                                <span class="text-indigo-400 font-bold">✓</span> Dynamic multi-option MCQ authoring
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-indigo-400 font-bold">✓</span> One-click Excel (.xlsx) data export
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-indigo-400 font-bold">✓</span> Department Passcode verification
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-8 space-y-2">
+                        <a href="/faculty/login" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs py-3 rounded-xl shadow-lg shadow-indigo-600/25 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                            Faculty Member Sign In
+                        </a>
+                        <a href="/faculty/register" class="w-full bg-slate-950/70 hover:bg-slate-850 text-slate-300 border border-slate-800 font-semibold text-xs py-2.5 rounded-xl transition flex items-center justify-center">
+                            Register with Faculty Key
+                        </a>
+                    </div>
+                </div>
 
-    <!-- Platform Highlights -->
-    <section class="metrics-banner" id="highlights">
-        <div class="metrics-inner">
-            <div class="metric-item">
-                <h4>99.9%</h4>
-                <p>System Availability</p>
-            </div>
-            <div class="metric-item">
-                <h4>256-Bit</h4>
-                <p>Credential Encryption</p>
-            </div>
-            <div class="metric-item">
-                <h4>.XLSX</h4>
-                <p>Automated Database Export</p>
-            </div>
-            <div class="metric-item">
-                <h4>100%</h4>
-                <p>Verified Faculty Access</p>
-            </div>
-        </div>
-    </section>
+                <!-- 3. Admin / HOD Control -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-3xl p-7 backdrop-blur-xl shadow-xl hover:border-purple-500/50 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold group-hover:scale-105 transition-transform">
+                            🛡️
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white tracking-tight">Admin & HOD Oversight</h3>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                Departmental governance queue for vetting, approving, and clearance of faculty authoring rights.
+                            </p>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+                            <li class="flex items-center gap-2">
+                                <span class="text-purple-400 font-bold">✓</span> Instructor clearance verification queue
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-purple-400 font-bold">✓</span> Instant approve/revoke authorization
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-purple-400 font-bold">✓</span> Master audit log access
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-8">
+                        <a href="/admin/login" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs py-3 rounded-xl shadow-lg shadow-purple-600/25 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                            Department Admin Gate →
+                        </a>
+                    </div>
+                </div>
 
-    <!-- Institutional Contact & Support -->
-    <section class="info-section" id="contact">
-        <div class="info-container">
-            <div class="info-col">
-                <h4>🏛️ Examination Regulatory Cell</h4>
-                <p>
-                    The official digital assessment infrastructure for academic testing, midterm evaluations, and departmental competitions. All accounts undergo supervisory HOD approval.
-                </p>
             </div>
-            <div class="info-col">
-                <h4>📞 Contact & Helpline</h4>
-                <ul class="contact-list">
-                    <li>
-                        <span>📧 Email:</span>
-                        <a href="mailto:examination@college.edu.in">examination@college.edu.in</a>
-                    </li>
-                    <li>
-                        <span>📞 Phone:</span>
-                        <a href="tel:+912012345678">+91 (020) 2456-7890</a>
-                    </li>
-                    <li>
-                        <span>📱 Mobile:</span>
-                        <a href="tel:+91 9511214949">+91 9511214949</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="info-col">
-                <h4>🏢 Department Office</h4>
-                <p>
-                    Computer Department & Examination Wing<br>
-                    Main Academic Block, Campus Level 2<br>
-                    Hours: Mon – Sat (10:00 AM – 05:00 PM)
-                </p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Professional Footer -->
-    <footer class="site-footer">
-        <p>© 2026 Institutional Examination & Quiz Management System. All Rights Reserved.</p>
-        <p style="margin-top: 4px;">Designed for academic rigor, authenticated security, and automated evaluation metrics.</p>
+        <!-- System Telemetry Highlights Banner -->
+        <section class="max-w-7xl mx-auto px-6 py-8" id="telemetry">
+            <div class="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-8 backdrop-blur-xl shadow-2xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-slate-800/80">
+                <div class="pt-4 md:pt-0">
+                    <span class="text-3xl sm:text-4xl font-black text-white font-mono block">99.9%</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1 block">Runtime Reliability</span>
+                </div>
+                <div class="pt-4 md:pt-0">
+                    <span class="text-3xl sm:text-4xl font-black text-indigo-400 font-mono block">256-Bit</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1 block">Bcrypt Encryption</span>
+                </div>
+                <div class="pt-4 md:pt-0">
+                    <span class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono block">.XLSX</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1 block">Telemetry Data Engine</span>
+                </div>
+                <div class="pt-4 md:pt-0">
+                    <span class="text-3xl sm:text-4xl font-black text-sky-400 font-mono block">Zero</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1 block">Unauthorized Registrations</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Institutional Regulatory Support -->
+        <section class="max-w-7xl mx-auto px-6 py-14" id="contact">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>🏛️</span> Examination Regulatory Cell
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Authorized departmental evaluation cloud infrastructure. All instructor accounts undergo rigorous supervisory approval before authoring permissions are activated.
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>📞</span> Operational Helpline
+                    </h3>
+                    <ul class="space-y-2 text-xs text-slate-300 font-mono">
+                        <li class="flex items-center gap-2">
+                            <span class="text-slate-500">Email:</span>
+                            <a href="mailto:examination@college.edu.in" class="text-indigo-400 hover:underline">examination@college.edu.in</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-slate-500">Desk:</span>
+                            <span class="text-slate-300">+91 (020) 2456-7890</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-slate-500">Direct:</span>
+                            <a href="tel:+919511214949" class="text-emerald-400 hover:underline">+91 9511214949</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>🏢</span> Campus Level Secretariat
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Department of Computer Engineering & Evaluation Wing<br>
+                        Main Academic Block, Campus Level 2<br>
+                        Operational Hours: Mon – Sat (10:00 AM – 05:00 PM IST)
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Unified Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500 relative z-10 space-y-1">
+        <p>© 2026 EduAssessment Examination & Quiz Cloud. All Rights Reserved.</p>
+        <p class="text-[11px] text-slate-600">Engineered for academic rigor, verifiable audit trails, and automated evaluation metrics.</p>
     </footer>
 
 </body>
