@@ -16,7 +16,7 @@ const studentAnswerSchema = new mongoose.Schema(
         },
         selectedOption: {
             type: Number,
-            default: null // null if the student skipped the question
+            default: null
         },
         correctOption: {
             type: Number,

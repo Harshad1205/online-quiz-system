@@ -10,7 +10,7 @@ require('dotenv').config();
 const Admin = require('./models/Admin');
 const Faculty = require('./models/Faculty');
 const Quiz = require('./models/Quiz');
-module.exports = mongoose.model('Result', resultSchema);
+const Result = require('./models/Result');
 
 const app = express();
 
