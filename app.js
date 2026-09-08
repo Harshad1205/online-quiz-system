@@ -184,8 +184,8 @@ app.post('/faculty/register', async (req, res) => {
 
         const configuredKey = process.env.FACULTY_SECRET_KEY || 'CollegeFaculty@2026';
         if (secretKey.trim() !== configuredKey) {
-            return res.status(401).render('faculty-register', {
-                error: 'Invalid Faculty Security Passcode. Unauthorized registrations are prohibited.'
+            return res.status(401).render('faculty-register', { 
+                error: 'Invalid Faculty Security Passcode. Unauthorized registrations are prohibited.' 
             });
         }
 
@@ -207,7 +207,7 @@ app.post('/faculty/register', async (req, res) => {
         });
 
         return res.render('faculty-login', { 
-            error: null,
+            error: null, 
             info: 'Registration submitted successfully! Your account is pending HOD/Admin verification. Please login once approved.' 
         });
 
@@ -491,7 +491,7 @@ app.get('/faculty/quiz-results/:id', isFacultyLoggedIn, async (req, res) => {
 });
 
 // =========================================================
-// EXCEL DATABASE EXPORT ROUTE FOR FACULTY
+// EXCEL DATABASE EXPORT ROUTE FOR FACULTY (WITH ANSWERS)
 // =========================================================
 app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
     try {
@@ -515,8 +515,8 @@ app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
             views: [{ showGridLines: true }]
         });
 
-        // Set Headers with standard professional sizing
-        worksheet.columns = [
+        // Set Headers: Standard info + dynamic column for each question
+        const columns = [
             { header: 'Sr No.', key: 'srNo', width: 8 },
             { header: 'Student Name', key: 'studentName', width: 28 },
             { header: 'Student Email', key: 'studentEmail', width: 34 },
@@ -526,6 +526,17 @@ app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
             { header: 'Submission Status', key: 'reason', width: 26 },
             { header: 'Submission Timestamp', key: 'submittedAt', width: 24 }
         ];
+
+        // Add dynamic headers for each question
+        quiz.questions.forEach((q, qIndex) => {
+            columns.push({
+                header: `Q${qIndex + 1} Selected`,
+                key: `q_${qIndex}`,
+                width: 25
+            });
+        });
+
+        worksheet.columns = columns;
 
         // Format header row style
         const headerRow = worksheet.getRow(1);
@@ -544,7 +555,7 @@ app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
             const percentage = ((resItem.score / total) * 100).toFixed(1) + '%';
             const dateStr = resItem.submittedAt ? new Date(resItem.submittedAt).toLocaleString() : 'N/A';
 
-            const row = worksheet.addRow({
+            const rowData = {
                 srNo: idx + 1,
                 studentName: resItem.studentName,
                 studentEmail: resItem.studentEmail,
@@ -553,7 +564,22 @@ app.get('/faculty/export-results/:id', isFacultyLoggedIn, async (req, res) => {
                 percentage: percentage,
                 reason: resItem.submissionReason || 'Normal Submission',
                 submittedAt: dateStr
-            });
+            };
+
+            // Map each question's selected answer if available
+            if (resItem.answers && resItem.answers.length > 0) {
+                resItem.answers.forEach((ans, qIndex) => {
+                    if (ans.selectedOption !== null && ans.selectedOption !== undefined) {
+                        const optLetter = String.fromCharCode(65 + ans.selectedOption);
+                        const optVal = ans.options && ans.options[ans.selectedOption] ? ans.options[ans.selectedOption] : '';
+                        rowData[`q_${qIndex}`] = `${optLetter}: ${optVal} ${ans.isCorrect ? '(✔ Correct)' : '(✖ Wrong)'}`;
+                    } else {
+                        rowData[`q_${qIndex}`] = 'Skipped';
+                    }
+                });
+            }
+
+            const row = worksheet.addRow(rowData);
 
             // Center-align specific data columns
             row.getCell('srNo').alignment = { horizontal: 'center' };
@@ -659,6 +685,9 @@ app.get('/exam/:id', async (req, res) => {
     }
 });
 
+// =========================================================
+// EXAM SUBMISSION WITH ANSWER LOGGING
+// =========================================================
 app.post('/exam/:id/submit', async (req, res) => {
     try {
         if (!req.session.studentName) {
@@ -667,7 +696,7 @@ app.post('/exam/:id/submit', async (req, res) => {
 
         const quiz = await Quiz.findById(req.params.id);
         if (!quiz) {
-            return res.send('Quiz not found.');
+            return res.status(404).send('Quiz not found.');
         }
 
         const existingResult = await Result.findOne({
@@ -683,11 +712,27 @@ app.post('/exam/:id/submit', async (req, res) => {
         const isPastDeadline = quiz.deadline && now > new Date(quiz.deadline);
 
         let score = 0;
-        quiz.questions.forEach((question, index) => {
-            const answer = req.body[`question_${index}`];
-            if (answer !== undefined && Number(answer) === question.correctAnswer) {
+        const recordedAnswers = [];
+
+        // Evaluate and record every student answer choice
+        quiz.questions.forEach((q, index) => {
+            const rawAnswer = req.body[`question_${index}`];
+            const hasAnswered = rawAnswer !== undefined && rawAnswer !== '';
+            const selectedOption = hasAnswered ? Number(rawAnswer) : null;
+            const isCorrect = selectedOption !== null && selectedOption === q.correctAnswer;
+
+            if (isCorrect) {
                 score++;
             }
+
+            recordedAnswers.push({
+                questionIndex: index,
+                questionText: q.question,
+                options: q.options,
+                selectedOption: selectedOption,
+                correctOption: q.correctAnswer,
+                isCorrect: isCorrect
+            });
         });
 
         let submissionReason = req.body.submissionReason || 'Normal Submission';
@@ -703,24 +748,31 @@ app.post('/exam/:id/submit', async (req, res) => {
             quiz: quiz._id,
             score,
             totalQuestions: quiz.questions.length,
+            answers: recordedAnswers,
             submissionReason,
             submittedAt
         });
 
         await result.save();
+
+        const studentName = req.session.studentName;
+        const studentEmail = req.session.studentEmail;
         delete req.session.examQuizId;
 
+        // Render result template with detailed answer breakdown
         res.render('result', {
             quiz,
+            result,
             score,
             totalQuestions: quiz.questions.length,
-            studentName: req.session.studentName,
+            studentName,
+            studentEmail,
             submissionReason,
             submittedAt
         });
     } catch (error) {
-        console.error(error);
-        res.send('Error recording exam submission.');
+        console.error('Error submitting exam:', error);
+        res.status(500).send('Error recording exam submission.');
     }
 });
 

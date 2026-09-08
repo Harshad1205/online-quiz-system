@@ -1,5 +1,35 @@
 const mongoose = require('mongoose');
 
+const studentAnswerSchema = new mongoose.Schema(
+    {
+        questionIndex: {
+            type: Number,
+            required: true
+        },
+        questionText: {
+            type: String,
+            required: true
+        },
+        options: {
+            type: [String],
+            required: true
+        },
+        selectedOption: {
+            type: Number,
+            default: null // null if the student skipped the question
+        },
+        correctOption: {
+            type: Number,
+            required: true
+        },
+        isCorrect: {
+            type: Boolean,
+            required: true
+        }
+    },
+    { _id: false }
+);
+
 const resultSchema = new mongoose.Schema(
     {
         studentName: {
@@ -9,12 +39,9 @@ const resultSchema = new mongoose.Schema(
         },
         studentEmail: {
             type: String,
-            lowercase: true,
-            trim: true
-        },
-        rollNo: {
-            type: String,
-            trim: true
+            required: true,
+            trim: true,
+            lowercase: true
         },
         quiz: {
             type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +56,10 @@ const resultSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
+        answers: {
+            type: [studentAnswerSchema],
+            default: []
+        },
         submissionReason: {
             type: String,
             default: 'Normal Submission'
@@ -39,7 +70,7 @@ const resultSchema = new mongoose.Schema(
         }
     },
     {
-        timestamps: true // Automatically maintains createdAt and updatedAt
+        timestamps: true
     }
 );
 
