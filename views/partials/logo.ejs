@@ -1,0 +1,52 @@
+<div class="flex items-center gap-3">
+    <!-- Circular Emblemed Medallion SVG -->
+    <div class="relative flex items-center justify-center">
+        <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-indigo-500 to-sky-400 opacity-40 blur-sm"></div>
+        <svg class="relative w-10 h-10 drop-shadow-md" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="medallionRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#38bdf8"/>
+                    <stop offset="50%" stop-color="#6366f1"/>
+                    <stop offset="100%" stop-color="#1e1b4b"/>
+                </linearGradient>
+                <linearGradient id="innerCore" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#1e293b"/>
+                    <stop offset="100%" stop-color="#020617"/>
+                </linearGradient>
+            </defs>
+
+            <!-- Outer Metallic Bezel -->
+            <circle cx="50" cy="50" r="48" fill="url(#medallionRim)" stroke="#64748b" stroke-width="1.5"/>
+            <circle cx="50" cy="50" r="42" fill="url(#innerCore)" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2 3"/>
+
+            <!-- Academic Greek Columns (Pillars) -->
+            <!-- Pediment / Roof -->
+            <polygon points="50,18 26,27 74,27" fill="#f8fafc" />
+            <!-- Entablature -->
+            <rect x="28" y="27.5" width="44" height="3" rx="0.5" fill="#94a3b8" />
+            <!-- Pillars -->
+            <rect x="31" y="32" width="4" height="20" rx="1" fill="#f8fafc" />
+            <rect x="43" y="32" width="4" height="20" rx="1" fill="#f8fafc" />
+            <rect x="53" y="32" width="4" height="20" rx="1" fill="#f8fafc" />
+            <rect x="65" y="32" width="4" height="20" rx="1" fill="#f8fafc" />
+            <!-- Base Steps -->
+            <rect x="28" y="53" width="44" height="3" rx="0.5" fill="#94a3b8" />
+            <rect x="25" y="56.5" width="50" height="3" rx="0.8" fill="#f8fafc" />
+
+            <!-- Assessment / Quiz Element: Stylized Evaluation Pencil & Star Badge -->
+            <path d="M40 76 L62 60 L65 63 L43 79 Z" fill="#38bdf8" />
+            <polygon points="40,76 37,81 43,79" fill="#f59e0b" />
+            <circle cx="68" cy="72" r="6" fill="#6366f1" stroke="#38bdf8" stroke-width="1"/>
+            <path d="M66 72 L67.5 74 L70.5 70" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Typography -->
+    <div>
+        <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-lg tracking-tight text-white leading-none">EduAssessment</span>
+            <span class="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">v2.6</span>
+        </div>
+        <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold block mt-0.5">Quiz Cloud Engine</span>
+    </div>
+</div>
