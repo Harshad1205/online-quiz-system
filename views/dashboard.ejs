@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Dashboard — Examination Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Browser Tab Favicon (Circular Quiz Medallion) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%230f172a' stroke='%2338bdf8' stroke-width='4'/%3E%3Cpolygon points='50,20 28,30 72,30' fill='%23f59e0b'/%3E%3Crect x='30' y='30' width='40' height='3' fill='%23f8fafc'/%3E%3Crect x='34' y='33' width='4' height='18' rx='1' fill='%23f8fafc'/%3E%3Crect x='44' y='33' width='4' height='18' rx='1' fill='%23f8fafc'/%3E%3Crect x='52' y='33' width='4' height='18' rx='1' fill='%23f8fafc'/%3E%3Crect x='62' y='33' width='4' height='18' rx='1' fill='%23f8fafc'/%3E%3Crect x='28' y='51' width='44' height='3' fill='%2394a3b8'/%3E%3Crect x='25' y='54' width='50' height='4' rx='1' fill='%23f8fafc'/%3E%3Crect x='28' y='64' width='12' height='12' rx='2' fill='%230284c7'/%3E%3Ctext x='34' y='73' font-size='9' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'%3EA%3C/text%3E%3Crect x='44' y='64' width='12' height='12' rx='2' fill='%236366f1'/%3E%3Ctext x='50' y='73' font-size='9' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'%3EB%3C/text%3E%3Crect x='60' y='64' width='12' height='12' rx='2' fill='%2310b981'/%3E%3Ctext x='66' y='73' font-size='9' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'%3EC%3C/text%3E%3C/svg%3E">
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white relative overflow-x-hidden antialiased">
+
+    <!-- Ambient Background Glows -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <% 
         const userGreeting = (typeof facultyName !== 'undefined' && facultyName) ? facultyName : 'Faculty Member';
@@ -18,16 +26,68 @@
     %>
 
     <!-- Top Navigation Header -->
-    <nav class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-50">
+    <nav class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-50 transition">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="/" class="flex items-center gap-3 transition hover:opacity-90">
-                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center font-extrabold text-white shadow-lg shadow-emerald-500/20 ring-1 ring-white/20">
-                        🏛️
+                <a href="/" class="flex items-center gap-3 group transition">
+                    <!-- Circular Medallion Emblem with Quiz ABC Elements -->
+                    <div class="relative flex items-center justify-center flex-shrink-0">
+                        <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-sky-400 via-indigo-500 to-amber-400 opacity-30 blur-[6px] group-hover:opacity-60 transition duration-300"></div>
+                        <svg class="relative w-11 h-11 drop-shadow-xl group-hover:scale-105 transition-transform duration-200" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="dashSilverRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#f8fafc"/>
+                                    <stop offset="25%" stop-color="#94a3b8"/>
+                                    <stop offset="50%" stop-color="#cbd5e1"/>
+                                    <stop offset="75%" stop-color="#64748b"/>
+                                    <stop offset="100%" stop-color="#334155"/>
+                                </linearGradient>
+                                <linearGradient id="dashMedallionCore" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#1e293b"/>
+                                    <stop offset="100%" stop-color="#020617"/>
+                                </linearGradient>
+                                <linearGradient id="dashPillarGold" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#fde68a"/>
+                                    <stop offset="50%" stop-color="#f59e0b"/>
+                                    <stop offset="100%" stop-color="#d97706"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Outer Double Bevel Border -->
+                            <circle cx="60" cy="60" r="57" fill="url(#dashSilverRim)" stroke="#475569" stroke-width="1.5"/>
+                            <circle cx="60" cy="60" r="51" fill="none" stroke="#f1f5f9" stroke-width="1.5" stroke-opacity="0.8"/>
+                            <circle cx="60" cy="60" r="48" fill="url(#dashMedallionCore)" stroke="#0ea5e9" stroke-width="1" stroke-dasharray="2 3"/>
+
+                            <!-- Classical Academic Pillars -->
+                            <polygon points="60,25 35,35 85,35" fill="url(#dashPillarGold)" />
+                            <rect x="36" y="35" width="48" height="3" rx="0.5" fill="#f8fafc" />
+                            <rect x="40" y="39" width="4" height="18" rx="1" fill="url(#dashPillarGold)" />
+                            <rect x="50" y="39" width="4" height="18" rx="1" fill="url(#dashPillarGold)" />
+                            <rect x="60" y="39" width="4" height="18" rx="1" fill="url(#dashPillarGold)" />
+                            <rect x="70" y="39" width="4" height="18" rx="1" fill="url(#dashPillarGold)" />
+                            <rect x="36" y="58" width="48" height="3" rx="0.5" fill="#94a3b8" />
+                            <rect x="33" y="61.5" width="54" height="3" rx="0.8" fill="#f8fafc" />
+
+                            <!-- Interactive ABC Options & Pencil -->
+                            <rect x="34" y="69" width="10" height="9" rx="2" fill="#0284c7" stroke="#38bdf8" stroke-width="0.8"/>
+                            <text x="39" y="76" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="sans-serif">A</text>
+
+                            <rect x="47" y="69" width="10" height="9" rx="2" fill="#4f46e5" stroke="#818cf8" stroke-width="0.8"/>
+                            <text x="52" y="76" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="sans-serif">B</text>
+
+                            <rect x="60" y="69" width="10" height="9" rx="2" fill="#059669" stroke="#34d399" stroke-width="0.8"/>
+                            <text x="65" y="76" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="sans-serif">C</text>
+
+                            <path d="M75 87 L87 75 L89 77 L77 89 Z" fill="#f59e0b" />
+                            <polygon points="75,87 72,91 77,89" fill="#e2e8f0" stroke="#475569" stroke-width="0.5" />
+                            <circle cx="72" cy="91" r="0.8" fill="#0f172a" />
+                        </svg>
                     </div>
+
+                    <!-- Typography -->
                     <div>
                         <span class="font-extrabold text-lg tracking-tight text-white block leading-none">EduAssessment</span>
-                        <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Faculty Workspace</span>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold block mt-0.5">Faculty Workspace</span>
                     </div>
                 </a>
             </div>
@@ -183,8 +243,12 @@
         <% } %>
 
     </main>
-<a href="/" class="flex items-center gap-3 transition hover:opacity-90">
-    <%- include('partials/logo') %>
-</a>
+
+    <!-- Unified Clean Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500 relative z-10 space-y-1">
+        <p>© 2026 EduAssessment Examination & Quiz Cloud. All Rights Reserved.</p>
+        <p class="text-[11px] text-slate-600">Engineered for academic rigor, verifiable audit trails, and automated evaluation metrics.</p>
+    </footer>
+
 </body>
 </html>
